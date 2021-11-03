@@ -11,18 +11,19 @@ namespace TimeBank.API
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
+        private readonly IConfiguration _config;
 
-        public IConfiguration Configuration { get; }
+        public Startup(IConfiguration _config)
+        {
+            this._config = _config;
+        }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.ConfigureCors();
             services.ConfigureIISIntegration();
+            services.ConfigureDatabase(_config);
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
