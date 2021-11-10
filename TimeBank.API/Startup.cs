@@ -6,6 +6,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using TimeBank.API.Extensions;
+using TimeBank.Services;
+using TimeBank.Services.Contracts;
 
 namespace TimeBank.API
 {
@@ -25,11 +27,16 @@ namespace TimeBank.API
             services.ConfigureIISIntegration();
             services.ConfigureDatabase(_config);
 
-            services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson(options =>
+            {
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+            });
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "TimeBank.API", Version = "v1" });
             });
+
+            services.AddScoped<IJobService, JobService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

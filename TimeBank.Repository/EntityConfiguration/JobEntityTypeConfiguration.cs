@@ -9,7 +9,11 @@ namespace TimeBank.Repository.EntityConfiguration
     {
         public void Configure(EntityTypeBuilder<Job> builder)
         {
-            builder.Property(j => j.Title)
+            builder.Property(j => j.DisplayId)
+                .IsRequired()
+                .HasMaxLength(36)
+                .IsFixedLength();
+            builder.Property(j => j.JobName)
                 .IsRequired()
                 .HasMaxLength(100);
             builder.Property(j => j.Description)
@@ -23,6 +27,7 @@ namespace TimeBank.Repository.EntityConfiguration
                 .HasColumnType("date");
             builder.Property(j => j.CreatedOn)
                 .HasColumnType("date")
+                .ValueGeneratedOnAdd()
                 .HasDefaultValueSql("getdate()");
         }
     }
