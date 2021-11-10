@@ -1,6 +1,8 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
+#nullable disable
+
 namespace TimeBank.Repository.Migrations
 {
     public partial class InitialMigration : Migration
@@ -15,9 +17,9 @@ namespace TimeBank.Repository.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Title = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
-                    ExpiresOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    JobStatus = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
-                    CreatedOn = table.Column<DateTime>(type: "date", nullable: false, defaultValue: new DateTime(2021, 11, 3, 0, 0, 0, 0, DateTimeKind.Local))
+                    ExpiresOn = table.Column<DateTime>(type: "date", nullable: false),
+                    JobStatus = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false, defaultValue: "Available"),
+                    CreatedOn = table.Column<DateTime>(type: "date", nullable: false, defaultValueSql: "getdate()")
                 },
                 constraints: table =>
                 {

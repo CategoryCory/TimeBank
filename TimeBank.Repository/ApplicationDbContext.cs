@@ -6,6 +6,8 @@ namespace TimeBank.Repository
 {
     public class ApplicationDbContext : DbContext
     {
+        public DbSet<Job> Jobs { get; set; }
+
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
@@ -15,7 +17,5 @@ namespace TimeBank.Repository
         {
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(JobEntityTypeConfiguration).Assembly);
         }
-
-        public DbSet<Job> Jobs { get; set; }
     }
 }
