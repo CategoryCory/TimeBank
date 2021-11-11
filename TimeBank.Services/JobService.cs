@@ -57,14 +57,17 @@ namespace TimeBank.Services
 
         public async Task<ApplicationResult> UpdateJobAsync(Job job)
         {
-            var jobToUpdate = await _context.Jobs.FirstOrDefaultAsync(j => j.DisplayId == job.DisplayId);
+            int jobId = await _context.Jobs
+                .Where(j => j.DisplayId == job.DisplayId)
+                .Select(j => j.JobId)
+                .FirstOrDefaultAsync();
 
-            if (jobToUpdate is null)
+            if (jobId == 0)
             {
                 return ApplicationResult.Failure(new List<string> { $"The job with name {job.JobName} could not be found." });
             }
 
-            job.JobId = jobToUpdate.JobId;
+            job.JobId = jobId;
             ValidationResult result = _jobValidator.Validate(job);
 
             if (!result.IsValid)
