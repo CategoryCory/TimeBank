@@ -24,6 +24,7 @@ namespace TimeBank.Repository.EntityConfiguration
                 .HasMaxLength(20)
                 .HasDefaultValue(JobStatus.Available);
             builder.Property(j => j.ExpiresOn)
+                .IsRequired()
                 .HasColumnType("date");
             builder.Property(j => j.CreatedOn)
                 .HasColumnType("date")

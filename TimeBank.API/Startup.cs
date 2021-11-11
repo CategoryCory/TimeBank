@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using TimeBank.API.Extensions;
+using TimeBank.API.Maps;
 using TimeBank.Services;
 using TimeBank.Services.Contracts;
 
@@ -36,6 +37,7 @@ namespace TimeBank.API
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "TimeBank.API", Version = "v1" });
             });
 
+            services.AddAutoMapper(typeof(MappingProfiles).Assembly);
             services.AddScoped<IJobService, JobService>();
         }
 

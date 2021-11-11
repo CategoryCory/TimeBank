@@ -4,11 +4,11 @@ namespace TimeBank.Services.Contracts
 {
     public interface IJobService
     {
-        Task CreateNewJobAsync(Job job);
-        Task DeleteJobAsync(Job job);
+        Task<ApplicationResult> CreateNewJobAsync(Job job);
+        Task<ApplicationResult> DeleteJobAsync(Guid displayId);
         Task<List<Job>> GetAllJobsAsync();
         Task<Job> GetJobByDisplayIdAsync(Guid displayId);
         Task<Job> GetJobByIdAsync(int id);
-        Task UpdateJobAsync(Job job);
+        Task<ApplicationResult> UpdateJobAsync(Job job);
     }
 }
