@@ -27,6 +27,7 @@ namespace TimeBank.API
             services.ConfigureCors();
             services.ConfigureIISIntegration();
             services.ConfigureDatabase(_config);
+            services.AddIdentityServices(_config);
 
             services.AddControllers().AddNewtonsoftJson(options =>
             {
