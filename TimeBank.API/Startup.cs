@@ -53,7 +53,6 @@ namespace TimeBank.API
             }
 
             app.UseHttpsRedirection();
-
             app.UseStaticFiles();
 
             app.UseForwardedHeaders(new ForwardedHeadersOptions
@@ -65,6 +64,7 @@ namespace TimeBank.API
 
             app.UseCors("CorsPolicy");
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
