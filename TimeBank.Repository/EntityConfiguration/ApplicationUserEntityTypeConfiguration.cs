@@ -1,10 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TimeBank.Repository.IdentityModels;
 
 namespace TimeBank.Repository.EntityConfiguration
@@ -14,16 +9,12 @@ namespace TimeBank.Repository.EntityConfiguration
         public void Configure(EntityTypeBuilder<ApplicationUser> builder)
         {
             builder.Property(a => a.StreetAddress)
-                .IsRequired()
                 .HasMaxLength(100);
             builder.Property(a => a.City)
-                .IsRequired()
                 .HasMaxLength(50);
             builder.Property(a => a.State)
-                .IsRequired()
                 .HasMaxLength(25);
             builder.Property(a => a.ZipCode)
-                .IsRequired()
                 .HasMaxLength(25);
             builder.Property(a => a.Biography)
                 .HasMaxLength(500);

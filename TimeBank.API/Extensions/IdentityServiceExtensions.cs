@@ -13,13 +13,17 @@ namespace TimeBank.API.Extensions
 {
     public static class IdentityServiceExtensions
     {
-        public static void AddIdentityServices(this IServiceCollection services, IConfiguration config)
+        public static void ConfigureIdentity(this IServiceCollection services, IConfiguration config)
         {
-            services.AddIdentityCore<ApplicationUser>(options => { })
+            services.AddIdentityCore<ApplicationUser>(options => 
+                {
+                    options.User.RequireUniqueEmail = true;
+                })
+                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddSignInManager<SignInManager<ApplicationUser>>();
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.GetValue<string>("TokenKey")));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.GetValue<string>("JwtSettings:SecurityKey")));
 
             services.AddAuthentication(authOptions =>
             {
@@ -30,11 +34,13 @@ namespace TimeBank.API.Extensions
                 {
                     bearerOptions.TokenValidationParameters = new TokenValidationParameters
                     {
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = key,
-                        ValidateIssuer = false,
-                        ValidateAudience = false,
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
                         ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = config.GetValue<string>("JwtSettings:ValidIssuer"),
+                        ValidAudience = config.GetValue<string>("JwtSettings:ValidAudience"),
+                        IssuerSigningKey = key,
                         ClockSkew = TimeSpan.FromMinutes(5)
                     };
                 });
