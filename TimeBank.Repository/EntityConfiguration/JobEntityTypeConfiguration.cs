@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using TimeBank.Entities.Models;
+using TimeBank.Repository.Models;
 
 namespace TimeBank.Repository.EntityConfiguration
 {
@@ -30,6 +29,9 @@ namespace TimeBank.Repository.EntityConfiguration
                 .HasColumnType("date")
                 .ValueGeneratedOnAdd()
                 .HasDefaultValueSql("getdate()");
+
+            builder.HasOne(j => j.CreatedBy)
+                .WithMany(c => c.Jobs);
         }
     }
 }

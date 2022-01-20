@@ -1,8 +1,8 @@
 ﻿using FluentValidation.Results;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using TimeBank.Entities.Models;
 using TimeBank.Repository;
+using TimeBank.Repository.Models;
 using TimeBank.Services.Contracts;
 using TimeBank.Services.Validators;
 

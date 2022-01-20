@@ -12,8 +12,8 @@ using TimeBank.Repository;
 namespace TimeBank.Repository.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20211213015934_RemoveRequiredFieldsFromUser")]
-    partial class RemoveRequiredFieldsFromUser
+    [Migration("20220120184003_InitialMigration")]
+    partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -53,15 +53,15 @@ namespace TimeBank.Repository.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "4c14f00d-d666-4a16-a317-76eaaa819efe",
-                            ConcurrencyStamp = "57f9da17-fd4a-49cf-af55-d1da387eabfe",
+                            Id = "f812ecdb-c7d1-4a2b-80ce-14885e2c00e5",
+                            ConcurrencyStamp = "9253d68d-5cf8-4847-bf59-852965b05b78",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "d525e861-f87c-4afe-b1cc-247ee17a00fe",
-                            ConcurrencyStamp = "ac179589-e548-4322-87b6-99c83dbcd80a",
+                            Id = "805991aa-8449-48fb-ac49-8441337623d2",
+                            ConcurrencyStamp = "372c7b5e-3814-4206-ba4b-f6fec4dc423d",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -173,49 +173,6 @@ namespace TimeBank.Repository.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("TimeBank.Entities.Models.Job", b =>
-                {
-                    b.Property<int>("JobId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("JobId"), 1L, 1);
-
-                    b.Property<DateTime>("CreatedOn")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("date")
-                        .HasDefaultValueSql("getdate()");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<Guid>("DisplayId")
-                        .HasMaxLength(36)
-                        .HasColumnType("uniqueidentifier")
-                        .IsFixedLength();
-
-                    b.Property<DateTime>("ExpiresOn")
-                        .HasColumnType("date");
-
-                    b.Property<string>("JobName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("JobStatus")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)")
-                        .HasDefaultValue("Available");
-
-                    b.HasKey("JobId");
-
-                    b.ToTable("Jobs");
-                });
-
             modelBuilder.Entity("TimeBank.Repository.IdentityModels.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
@@ -322,6 +279,131 @@ namespace TimeBank.Repository.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("TimeBank.Repository.Models.Job", b =>
+                {
+                    b.Property<int>("JobId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("JobId"), 1L, 1);
+
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("date")
+                        .HasDefaultValueSql("getdate()");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<Guid>("DisplayId")
+                        .HasMaxLength(36)
+                        .HasColumnType("uniqueidentifier")
+                        .IsFixedLength();
+
+                    b.Property<DateTime>("ExpiresOn")
+                        .HasColumnType("date");
+
+                    b.Property<string>("JobName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("JobStatus")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)")
+                        .HasDefaultValue("Available");
+
+                    b.HasKey("JobId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.ToTable("Jobs");
+                });
+
+            modelBuilder.Entity("TimeBank.Repository.Models.TokenBalance", b =>
+                {
+                    b.Property<int>("TokenBalanceId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TokenBalanceId"), 1L, 1);
+
+                    b.Property<double>("CurrentBalance")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("float")
+                        .HasDefaultValue(5.0);
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("TokenBalanceId");
+
+                    b.HasIndex("UserId")
+                        .IsUnique()
+                        .HasFilter("[UserId] IS NOT NULL");
+
+                    b.ToTable("TokenBalance");
+                });
+
+            modelBuilder.Entity("TimeBank.Repository.Models.TokenTransaction", b =>
+                {
+                    b.Property<int>("TokenTransactionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TokenTransactionId"), 1L, 1);
+
+                    b.Property<double>("Amount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("float")
+                        .HasDefaultValue(0.0);
+
+                    b.Property<DateTime>("ProcessedOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("getdate()");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("TokenTransactionId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("TokenTransaction");
+                });
+
+            modelBuilder.Entity("TimeBank.Repository.Models.TokenTransactionRecipient", b =>
+                {
+                    b.Property<int>("TokenTransactionRecipientId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TokenTransactionRecipientId"), 1L, 1);
+
+                    b.Property<int>("TokenTransactionId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("TokenTransactionRecipientId");
+
+                    b.HasIndex("TokenTransactionId")
+                        .IsUnique();
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("TokenTransactionRecipient");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -371,6 +453,66 @@ namespace TimeBank.Repository.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("TimeBank.Repository.Models.Job", b =>
+                {
+                    b.HasOne("TimeBank.Repository.IdentityModels.ApplicationUser", "CreatedBy")
+                        .WithMany("Jobs")
+                        .HasForeignKey("CreatedById");
+
+                    b.Navigation("CreatedBy");
+                });
+
+            modelBuilder.Entity("TimeBank.Repository.Models.TokenBalance", b =>
+                {
+                    b.HasOne("TimeBank.Repository.IdentityModels.ApplicationUser", "User")
+                        .WithOne("TokenBalance")
+                        .HasForeignKey("TimeBank.Repository.Models.TokenBalance", "UserId");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("TimeBank.Repository.Models.TokenTransaction", b =>
+                {
+                    b.HasOne("TimeBank.Repository.IdentityModels.ApplicationUser", "User")
+                        .WithMany("TokenTransactions")
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("TimeBank.Repository.Models.TokenTransactionRecipient", b =>
+                {
+                    b.HasOne("TimeBank.Repository.Models.TokenTransaction", "TokenTransaction")
+                        .WithOne("Recipient")
+                        .HasForeignKey("TimeBank.Repository.Models.TokenTransactionRecipient", "TokenTransactionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TimeBank.Repository.IdentityModels.ApplicationUser", "User")
+                        .WithMany("TokenTransactionRecipients")
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("TokenTransaction");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("TimeBank.Repository.IdentityModels.ApplicationUser", b =>
+                {
+                    b.Navigation("Jobs");
+
+                    b.Navigation("TokenBalance");
+
+                    b.Navigation("TokenTransactionRecipients");
+
+                    b.Navigation("TokenTransactions");
+                });
+
+            modelBuilder.Entity("TimeBank.Repository.Models.TokenTransaction", b =>
+                {
+                    b.Navigation("Recipient");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TimeBank.Repository.IdentityModels;
+using TimeBank.Repository.Models;
 
 namespace TimeBank.Repository.EntityConfiguration
 {
@@ -28,6 +29,10 @@ namespace TimeBank.Repository.EntityConfiguration
                 .HasMaxLength(200);
             builder.Property(a => a.IsApproved)
                 .HasDefaultValue(false);
+
+            builder.HasOne(a => a.TokenBalance)
+                .WithOne(t => t.User)
+                .HasForeignKey<TokenBalance>(t => t.UserId);
         }
     }
 }

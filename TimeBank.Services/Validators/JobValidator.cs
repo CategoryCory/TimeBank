@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using TimeBank.Entities.Models;
+using TimeBank.Repository.Models;
 
 namespace TimeBank.Services.Validators
 {

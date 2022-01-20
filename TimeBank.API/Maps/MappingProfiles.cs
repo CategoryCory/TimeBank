@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using TimeBank.API.Dtos;
-using TimeBank.Entities.Models;
 using TimeBank.Repository.IdentityModels;
+using TimeBank.Repository.Models;
 
 namespace TimeBank.API.Maps
 {

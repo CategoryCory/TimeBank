@@ -17,7 +17,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TimeBank.Entities\TimeBank.Entities.csproj" />
     <ProjectReference Include="..\TimeBank.Repository\TimeBank.Repository.csproj" />
     <ProjectReference Include="..\TimeBank.Services\TimeBank.Services.csproj" />
   </ItemGroup>

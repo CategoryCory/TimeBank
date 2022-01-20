@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using TimeBank.Entities.Models;
 using TimeBank.Repository.EntityConfiguration;
 using TimeBank.Repository.IdentityModels;
+using TimeBank.Repository.Models;
 
 namespace TimeBank.Repository
 {

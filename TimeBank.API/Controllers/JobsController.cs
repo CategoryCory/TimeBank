@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
 using TimeBank.API.Dtos;
-using TimeBank.Entities.Models;
+using TimeBank.Repository.Models;
 using TimeBank.Services;
 using TimeBank.Services.Contracts;
 
