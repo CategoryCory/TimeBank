@@ -9,6 +9,12 @@ namespace TimeBank.Repository.EntityConfiguration
     {
         public void Configure(EntityTypeBuilder<ApplicationUser> builder)
         {
+            builder.Property(a => a.FirstName)
+                .IsRequired()
+                .HasMaxLength(50);
+            builder.Property(a => a.LastName)
+                .IsRequired()
+                .HasMaxLength(50);
             builder.Property(a => a.StreetAddress)
                 .HasMaxLength(100);
             builder.Property(a => a.City)

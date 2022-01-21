@@ -7,6 +7,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using TimeBank.API.Extensions;
 using TimeBank.API.Maps;
+using TimeBank.API.Services;
 using TimeBank.Services;
 using TimeBank.Services.Contracts;
 
@@ -40,6 +41,8 @@ namespace TimeBank.API
 
             services.AddAutoMapper(typeof(MappingProfiles).Assembly);
             services.AddScoped<IJobService, JobService>();
+            services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<ITokenBalanceService, TokenBalanceService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

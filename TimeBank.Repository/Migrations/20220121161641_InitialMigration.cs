@@ -189,7 +189,7 @@ namespace TimeBank.Repository.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "TokenBalance",
+                name: "TokenBalances",
                 columns: table => new
                 {
                     TokenBalanceId = table.Column<int>(type: "int", nullable: false)
@@ -199,16 +199,16 @@ namespace TimeBank.Repository.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TokenBalance", x => x.TokenBalanceId);
+                    table.PrimaryKey("PK_TokenBalances", x => x.TokenBalanceId);
                     table.ForeignKey(
-                        name: "FK_TokenBalance_AspNetUsers_UserId",
+                        name: "FK_TokenBalances_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
-                name: "TokenTransaction",
+                name: "TokenTransactions",
                 columns: table => new
                 {
                     TokenTransactionId = table.Column<int>(type: "int", nullable: false)
@@ -219,16 +219,16 @@ namespace TimeBank.Repository.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TokenTransaction", x => x.TokenTransactionId);
+                    table.PrimaryKey("PK_TokenTransactions", x => x.TokenTransactionId);
                     table.ForeignKey(
-                        name: "FK_TokenTransaction_AspNetUsers_UserId",
+                        name: "FK_TokenTransactions_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
-                name: "TokenTransactionRecipient",
+                name: "TokenTransactionRecipients",
                 columns: table => new
                 {
                     TokenTransactionRecipientId = table.Column<int>(type: "int", nullable: false)
@@ -238,16 +238,16 @@ namespace TimeBank.Repository.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TokenTransactionRecipient", x => x.TokenTransactionRecipientId);
+                    table.PrimaryKey("PK_TokenTransactionRecipients", x => x.TokenTransactionRecipientId);
                     table.ForeignKey(
-                        name: "FK_TokenTransactionRecipient_AspNetUsers_UserId",
+                        name: "FK_TokenTransactionRecipients_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_TokenTransactionRecipient_TokenTransaction_TokenTransactionId",
+                        name: "FK_TokenTransactionRecipients_TokenTransactions_TokenTransactionId",
                         column: x => x.TokenTransactionId,
-                        principalTable: "TokenTransaction",
+                        principalTable: "TokenTransactions",
                         principalColumn: "TokenTransactionId",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -255,12 +255,12 @@ namespace TimeBank.Repository.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "805991aa-8449-48fb-ac49-8441337623d2", "372c7b5e-3814-4206-ba4b-f6fec4dc423d", "User", "USER" });
+                values: new object[] { "7ba9491b-42b6-47b8-8a0a-1347d6330309", "fb5205d7-9478-4067-9e97-8f236570e365", "Admin", "ADMIN" });
 
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "f812ecdb-c7d1-4a2b-80ce-14885e2c00e5", "9253d68d-5cf8-4847-bf59-852965b05b78", "Admin", "ADMIN" });
+                values: new object[] { "9c245b1a-3a72-4ba3-877b-3c86225d903e", "f8632c3c-224e-4ed7-9e03-4b0d0f71beea", "User", "USER" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -307,26 +307,26 @@ namespace TimeBank.Repository.Migrations
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TokenBalance_UserId",
-                table: "TokenBalance",
+                name: "IX_TokenBalances_UserId",
+                table: "TokenBalances",
                 column: "UserId",
                 unique: true,
                 filter: "[UserId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TokenTransaction_UserId",
-                table: "TokenTransaction",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TokenTransactionRecipient_TokenTransactionId",
-                table: "TokenTransactionRecipient",
+                name: "IX_TokenTransactionRecipients_TokenTransactionId",
+                table: "TokenTransactionRecipients",
                 column: "TokenTransactionId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_TokenTransactionRecipient_UserId",
-                table: "TokenTransactionRecipient",
+                name: "IX_TokenTransactionRecipients_UserId",
+                table: "TokenTransactionRecipients",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TokenTransactions_UserId",
+                table: "TokenTransactions",
                 column: "UserId");
         }
 
@@ -351,16 +351,16 @@ namespace TimeBank.Repository.Migrations
                 name: "Jobs");
 
             migrationBuilder.DropTable(
-                name: "TokenBalance");
+                name: "TokenBalances");
 
             migrationBuilder.DropTable(
-                name: "TokenTransactionRecipient");
+                name: "TokenTransactionRecipients");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "TokenTransaction");
+                name: "TokenTransactions");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

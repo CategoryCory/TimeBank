@@ -44,7 +44,7 @@ namespace TimeBank.Services
 
             if (!result.IsValid)
             {
-                _logger.LogError($"Failed to create new job with name {job.JobName}");
+                _logger.LogError("Failed to create new job with name {JobName}", job.JobName);
 
                 return ApplicationResult.Failure(result.Errors.Select(err => err.ErrorMessage).ToList());
             }
@@ -72,7 +72,7 @@ namespace TimeBank.Services
 
             if (!result.IsValid)
             {
-                _logger.LogError($"Failed to update job with name {job.JobName}");
+                _logger.LogError("Failed to update job with name {JobName}", job.JobName);
 
                 return ApplicationResult.Failure(result.Errors.Select(err => err.ErrorMessage).ToList());
             }

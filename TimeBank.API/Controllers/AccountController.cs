@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using TimeBank.API.Dtos;
 using TimeBank.API.Services;
 using TimeBank.Repository.IdentityModels;
+using TimeBank.Services.Contracts;
 
 namespace TimeBank.API.Controllers
 {
@@ -19,17 +20,20 @@ namespace TimeBank.API.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IMapper _mapper;
-        private readonly TokenService _tokenService;
+        private readonly ITokenService _tokenService;
+        private readonly ITokenBalanceService _tokenBalanceService;
 
         public AccountController(UserManager<ApplicationUser> userManager,
                                  SignInManager<ApplicationUser> signInManager,
                                  IMapper mapper,
-                                 TokenService tokenService)
+                                 ITokenService tokenService,
+                                 ITokenBalanceService tokenBalanceService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _mapper = mapper;
             _tokenService = tokenService;
+            _tokenBalanceService = tokenBalanceService;
         }
 
         [HttpPost("login")]
@@ -48,7 +52,7 @@ namespace TimeBank.API.Controllers
 
             if (!result.Succeeded) return Unauthorized();
 
-            var userDto = await CreateUserDto(user);
+            var userDto = await CreateUserLoginResponseDto(user);
             return Ok(userDto);
         }
 
@@ -71,16 +75,20 @@ namespace TimeBank.API.Controllers
 
             await _userManager.AddToRoleAsync(user, userRegistrationDto.UserRole);
 
+            await _tokenBalanceService.CreateNewBalance(user.Id);
+
             return StatusCode(StatusCodes.Status201Created);
         }
 
-        private async Task<UserLoginResponseDto> CreateUserDto(ApplicationUser user)
+        private async Task<UserLoginResponseDto> CreateUserLoginResponseDto(ApplicationUser user)
         {
             var token = await _tokenService.CreateToken(user);
 
             return new UserLoginResponseDto
             {
-                DisplayName = string.Empty,
+                IsAuthenticationSuccessful = true,
+                ErrorMessage = string.Empty,
+                DisplayName = user.FirstName,
                 UserName = user.UserName,
                 Token = token
             };

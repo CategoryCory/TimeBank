@@ -11,7 +11,7 @@ using TimeBank.Repository.IdentityModels;
 
 namespace TimeBank.API.Services
 {
-    public class TokenService
+    public class TokenService : ITokenService
     {
         private readonly IConfiguration _config;
         private readonly UserManager<ApplicationUser> _userManager;

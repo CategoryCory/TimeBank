@@ -9,6 +9,9 @@ namespace TimeBank.Repository
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public DbSet<Job> Jobs { get; set; }
+        public DbSet<TokenBalance> TokenBalances { get; set; }
+        public DbSet<TokenTransaction> TokenTransactions { get; set; }
+        public DbSet<TokenTransactionRecipient> TokenTransactionRecipients { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)

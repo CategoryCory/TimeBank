@@ -12,7 +12,7 @@ using TimeBank.Repository;
 namespace TimeBank.Repository.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220120184003_InitialMigration")]
+    [Migration("20220121161641_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -53,15 +53,15 @@ namespace TimeBank.Repository.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "f812ecdb-c7d1-4a2b-80ce-14885e2c00e5",
-                            ConcurrencyStamp = "9253d68d-5cf8-4847-bf59-852965b05b78",
+                            Id = "7ba9491b-42b6-47b8-8a0a-1347d6330309",
+                            ConcurrencyStamp = "fb5205d7-9478-4067-9e97-8f236570e365",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "805991aa-8449-48fb-ac49-8441337623d2",
-                            ConcurrencyStamp = "372c7b5e-3814-4206-ba4b-f6fec4dc423d",
+                            Id = "9c245b1a-3a72-4ba3-877b-3c86225d903e",
+                            ConcurrencyStamp = "f8632c3c-224e-4ed7-9e03-4b0d0f71beea",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -349,7 +349,7 @@ namespace TimeBank.Repository.Migrations
                         .IsUnique()
                         .HasFilter("[UserId] IS NOT NULL");
 
-                    b.ToTable("TokenBalance");
+                    b.ToTable("TokenBalances");
                 });
 
             modelBuilder.Entity("TimeBank.Repository.Models.TokenTransaction", b =>
@@ -377,7 +377,7 @@ namespace TimeBank.Repository.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("TokenTransaction");
+                    b.ToTable("TokenTransactions");
                 });
 
             modelBuilder.Entity("TimeBank.Repository.Models.TokenTransactionRecipient", b =>
@@ -401,7 +401,7 @@ namespace TimeBank.Repository.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("TokenTransactionRecipient");
+                    b.ToTable("TokenTransactionRecipients");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
