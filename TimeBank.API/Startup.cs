@@ -41,6 +41,7 @@ namespace TimeBank.API
 
             services.AddAutoMapper(typeof(MappingProfiles).Assembly);
             services.AddScoped<IJobService, JobService>();
+            services.AddScoped<IJobCategoryService, JobCategoryService>();
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<ITokenBalanceService, TokenBalanceService>();
             services.AddScoped<ITokenTransactionService, TokenTransactionService>();

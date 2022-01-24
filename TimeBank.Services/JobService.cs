@@ -36,7 +36,7 @@ namespace TimeBank.Services
             return await _context.Jobs.FirstOrDefaultAsync(j => j.DisplayId == displayId);
         }
 
-        public async Task<ApplicationResult> CreateNewJobAsync(Job job)
+        public async Task<ApplicationResult> AddJobAsync(Job job)
         {
             job.DisplayId = Guid.NewGuid();
 

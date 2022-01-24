@@ -63,7 +63,7 @@ namespace TimeBank.API.Controllers
         {
             var jobToCreate = _mapper.Map<Job>(jobDto);
 
-            ApplicationResult result = await _jobService.CreateNewJobAsync(jobToCreate);
+            ApplicationResult result = await _jobService.AddJobAsync(jobToCreate);
 
             if (!result.IsSuccess)
             {
