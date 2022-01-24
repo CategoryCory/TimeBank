@@ -12,8 +12,8 @@ using TimeBank.Repository;
 namespace TimeBank.Repository.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220121162639_AddFirstLastNameToUser")]
-    partial class AddFirstLastNameToUser
+    [Migration("20220123205326_InitialMigration")]
+    partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -53,15 +53,15 @@ namespace TimeBank.Repository.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "60b902d0-f9ba-4d7b-ad19-dd58758b3d55",
-                            ConcurrencyStamp = "5b3b0ee6-e9f8-416b-adba-1b72413299b7",
+                            Id = "85e8872d-ef53-4d30-ae27-38f44733cd7f",
+                            ConcurrencyStamp = "0ad34e75-e22d-44c9-8584-5efc7e1a5574",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "e5034d77-a3ef-4af6-95f5-67ba32e11573",
-                            ConcurrencyStamp = "01ac5f5c-cd99-4026-be0d-36a90c366548",
+                            Id = "a827432a-d157-4f69-a275-5848946c9c67",
+                            ConcurrencyStamp = "7adb7309-bc42-4f8f-94e5-c068faa53ede",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -380,38 +380,19 @@ namespace TimeBank.Repository.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("getdate()");
 
-                    b.Property<string>("UserId")
+                    b.Property<string>("RecipientId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("SenderId")
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("TokenTransactionId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("RecipientId");
+
+                    b.HasIndex("SenderId");
 
                     b.ToTable("TokenTransactions");
-                });
-
-            modelBuilder.Entity("TimeBank.Repository.Models.TokenTransactionRecipient", b =>
-                {
-                    b.Property<int>("TokenTransactionRecipientId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TokenTransactionRecipientId"), 1L, 1);
-
-                    b.Property<int>("TokenTransactionId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("TokenTransactionRecipientId");
-
-                    b.HasIndex("TokenTransactionId")
-                        .IsUnique();
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("TokenTransactionRecipients");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -485,44 +466,28 @@ namespace TimeBank.Repository.Migrations
 
             modelBuilder.Entity("TimeBank.Repository.Models.TokenTransaction", b =>
                 {
-                    b.HasOne("TimeBank.Repository.IdentityModels.ApplicationUser", "User")
-                        .WithMany("TokenTransactions")
-                        .HasForeignKey("UserId");
+                    b.HasOne("TimeBank.Repository.IdentityModels.ApplicationUser", "Recipient")
+                        .WithMany("ReceivedTransactions")
+                        .HasForeignKey("RecipientId");
 
-                    b.Navigation("User");
-                });
+                    b.HasOne("TimeBank.Repository.IdentityModels.ApplicationUser", "Sender")
+                        .WithMany("SentTransactions")
+                        .HasForeignKey("SenderId");
 
-            modelBuilder.Entity("TimeBank.Repository.Models.TokenTransactionRecipient", b =>
-                {
-                    b.HasOne("TimeBank.Repository.Models.TokenTransaction", "TokenTransaction")
-                        .WithOne("Recipient")
-                        .HasForeignKey("TimeBank.Repository.Models.TokenTransactionRecipient", "TokenTransactionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("Recipient");
 
-                    b.HasOne("TimeBank.Repository.IdentityModels.ApplicationUser", "User")
-                        .WithMany("TokenTransactionRecipients")
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("TokenTransaction");
-
-                    b.Navigation("User");
+                    b.Navigation("Sender");
                 });
 
             modelBuilder.Entity("TimeBank.Repository.IdentityModels.ApplicationUser", b =>
                 {
                     b.Navigation("Jobs");
 
+                    b.Navigation("ReceivedTransactions");
+
+                    b.Navigation("SentTransactions");
+
                     b.Navigation("TokenBalance");
-
-                    b.Navigation("TokenTransactionRecipients");
-
-                    b.Navigation("TokenTransactions");
-                });
-
-            modelBuilder.Entity("TimeBank.Repository.Models.TokenTransaction", b =>
-                {
-                    b.Navigation("Recipient");
                 });
 #pragma warning restore 612, 618
         }

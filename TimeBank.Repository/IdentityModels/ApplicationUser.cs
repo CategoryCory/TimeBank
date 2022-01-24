@@ -23,8 +23,7 @@ namespace TimeBank.Repository.IdentityModels
 
         public TokenBalance TokenBalance { get; set; }
 
-        public ICollection<TokenTransaction> TokenTransactions { get; set; }
-
-        public ICollection<TokenTransactionRecipient> TokenTransactionRecipients { get; set; }
+        public ICollection<TokenTransaction> SentTransactions { get; set; }
+        public ICollection<TokenTransaction> ReceivedTransactions { get; set; }
     }
 }

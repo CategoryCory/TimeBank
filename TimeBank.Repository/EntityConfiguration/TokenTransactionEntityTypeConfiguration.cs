@@ -15,12 +15,13 @@ namespace TimeBank.Repository.EntityConfiguration
                 .IsRequired()
                 .HasDefaultValueSql("getdate()");
 
-            builder.HasOne(t => t.User)
-                .WithMany(u => u.TokenTransactions);
+            builder.HasOne(t => t.Sender)
+                .WithMany(u => u.SentTransactions)
+                .HasForeignKey(t => t.SenderId);
 
             builder.HasOne(t => t.Recipient)
-                .WithOne(r => r.TokenTransaction)
-                .HasForeignKey<TokenTransactionRecipient>(r => r.TokenTransactionId);
+                .WithMany(u => u.ReceivedTransactions)
+                .HasForeignKey(t => t.RecipientId);
         }
     }
 }

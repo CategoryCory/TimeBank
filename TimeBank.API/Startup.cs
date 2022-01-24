@@ -43,6 +43,7 @@ namespace TimeBank.API
             services.AddScoped<IJobService, JobService>();
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<ITokenBalanceService, TokenBalanceService>();
+            services.AddScoped<ITokenTransactionService, TokenTransactionService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

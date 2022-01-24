@@ -21,6 +21,9 @@ namespace TimeBank.Repository.Models
         public JobStatus JobStatus { get; set; }
         public DateTime CreatedOn { get; set; }
 
+        public int JobCategoryId { get; set; }
+        public JobCategory JobCategory { get; set; }
+
         public string CreatedById { get; set; }
         public ApplicationUser CreatedBy { get; set; }
     }

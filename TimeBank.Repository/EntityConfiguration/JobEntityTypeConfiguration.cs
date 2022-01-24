@@ -30,6 +30,9 @@ namespace TimeBank.Repository.EntityConfiguration
                 .ValueGeneratedOnAdd()
                 .HasDefaultValueSql("getdate()");
 
+            builder.HasOne(j => j.JobCategory)
+                .WithMany(c => c.Jobs);
+
             builder.HasOne(j => j.CreatedBy)
                 .WithMany(c => c.Jobs);
         }

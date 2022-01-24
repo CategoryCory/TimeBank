@@ -28,6 +28,8 @@ namespace TimeBank.Repository.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     StreetAddress = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     City = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     State = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: true),
@@ -215,52 +217,33 @@ namespace TimeBank.Repository.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Amount = table.Column<double>(type: "float", nullable: false, defaultValue: 0.0),
                     ProcessedOn = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    SenderId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    RecipientId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_TokenTransactions", x => x.TokenTransactionId);
                     table.ForeignKey(
-                        name: "FK_TokenTransactions_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "TokenTransactionRecipients",
-                columns: table => new
-                {
-                    TokenTransactionRecipientId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    TokenTransactionId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TokenTransactionRecipients", x => x.TokenTransactionRecipientId);
-                    table.ForeignKey(
-                        name: "FK_TokenTransactionRecipients_AspNetUsers_UserId",
-                        column: x => x.UserId,
+                        name: "FK_TokenTransactions_AspNetUsers_RecipientId",
+                        column: x => x.RecipientId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_TokenTransactionRecipients_TokenTransactions_TokenTransactionId",
-                        column: x => x.TokenTransactionId,
-                        principalTable: "TokenTransactions",
-                        principalColumn: "TokenTransactionId",
-                        onDelete: ReferentialAction.Cascade);
+                        name: "FK_TokenTransactions_AspNetUsers_SenderId",
+                        column: x => x.SenderId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "7ba9491b-42b6-47b8-8a0a-1347d6330309", "fb5205d7-9478-4067-9e97-8f236570e365", "Admin", "ADMIN" });
+                values: new object[] { "85e8872d-ef53-4d30-ae27-38f44733cd7f", "0ad34e75-e22d-44c9-8584-5efc7e1a5574", "Admin", "ADMIN" });
 
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "9c245b1a-3a72-4ba3-877b-3c86225d903e", "f8632c3c-224e-4ed7-9e03-4b0d0f71beea", "User", "USER" });
+                values: new object[] { "a827432a-d157-4f69-a275-5848946c9c67", "7adb7309-bc42-4f8f-94e5-c068faa53ede", "User", "USER" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -314,20 +297,14 @@ namespace TimeBank.Repository.Migrations
                 filter: "[UserId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TokenTransactionRecipients_TokenTransactionId",
-                table: "TokenTransactionRecipients",
-                column: "TokenTransactionId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TokenTransactionRecipients_UserId",
-                table: "TokenTransactionRecipients",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TokenTransactions_UserId",
+                name: "IX_TokenTransactions_RecipientId",
                 table: "TokenTransactions",
-                column: "UserId");
+                column: "RecipientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TokenTransactions_SenderId",
+                table: "TokenTransactions",
+                column: "SenderId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -354,13 +331,10 @@ namespace TimeBank.Repository.Migrations
                 name: "TokenBalances");
 
             migrationBuilder.DropTable(
-                name: "TokenTransactionRecipients");
+                name: "TokenTransactions");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
-
-            migrationBuilder.DropTable(
-                name: "TokenTransactions");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
