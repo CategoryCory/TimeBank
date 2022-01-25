@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using TimeBank.API.Dtos;
 using TimeBank.Repository.Models;
@@ -57,6 +59,7 @@ namespace TimeBank.API.Controllers
 
         // POST api/<JobsController>
         [HttpPost]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreateNewJob([FromBody] JobDto jobDto)
@@ -75,6 +78,7 @@ namespace TimeBank.API.Controllers
 
         // PUT api/<JobsController>/5
         [HttpPut]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -99,6 +103,7 @@ namespace TimeBank.API.Controllers
 
         // DELETE api/<JobsController>/5
         [HttpDelete("{displayId}")]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteJob(Guid displayId)
