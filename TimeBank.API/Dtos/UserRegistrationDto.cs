@@ -16,9 +16,6 @@ namespace TimeBank.API.Dtos
         [MaxLength(256)]
         public string Email { get; set; }
 
-        [Required(ErrorMessage = "User role is required.")]
-        public string UserRole { get; set; }
-
         [Required(ErrorMessage = "Password is required.")]
         public string Password { get; set; }
 

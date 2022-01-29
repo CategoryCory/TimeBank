@@ -17,18 +17,21 @@ namespace TimeBank.API.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IMapper _mapper;
         private readonly ITokenService _tokenService;
         private readonly ITokenBalanceService _tokenBalanceService;
 
         public AccountController(UserManager<ApplicationUser> userManager,
                                  SignInManager<ApplicationUser> signInManager,
+                                 RoleManager<IdentityRole> roleManager,
                                  IMapper mapper,
                                  ITokenService tokenService,
                                  ITokenBalanceService tokenBalanceService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _roleManager = roleManager;
             _mapper = mapper;
             _tokenService = tokenService;
             _tokenBalanceService = tokenBalanceService;
@@ -71,7 +74,13 @@ namespace TimeBank.API.Controllers
                 return BadRequest(errors);
             }
 
-            await _userManager.AddToRoleAsync(user, userRegistrationDto.UserRole);
+            if (await _roleManager.RoleExistsAsync("User") == false)
+            {
+                var userRole = new IdentityRole { Name = "User", NormalizedName = "USER" };
+                await _roleManager.CreateAsync(userRole);
+            }
+
+            await _userManager.AddToRoleAsync(user, "User");
 
             await _tokenBalanceService.CreateNewBalance(user.Id);
 
