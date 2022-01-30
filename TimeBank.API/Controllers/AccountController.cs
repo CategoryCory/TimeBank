@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using TimeBank.API.Dtos;
 using TimeBank.API.Services;
@@ -85,6 +87,20 @@ namespace TimeBank.API.Controllers
             await _tokenBalanceService.CreateNewBalance(user.Id);
 
             return StatusCode(StatusCodes.Status201Created);
+        }
+
+        [HttpGet]
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetCurrentUser()
+        {
+            var user = await _userManager.FindByEmailAsync(User.FindFirstValue(ClaimTypes.Email));
+
+            if (user is null) return NotFound();
+
+            var userDto = await CreateUserLoginResponseDto(user);
+            return Ok(userDto);
         }
 
         private async Task<UserLoginResponseDto> CreateUserLoginResponseDto(ApplicationUser user)
