@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections.Generic;
 using TimeBank.Repository.Models;
 
@@ -12,6 +13,8 @@ namespace TimeBank.Repository.IdentityModels
         public string City { get; set; }
         public string State { get; set; }
         public string ZipCode { get; set; }
+        public string Phone { get; set; }
+        public DateTime Birthday { get; set; }
         public string Biography { get; set; }
         public string Facebook { get; set; }
         public string Twitter { get; set; }

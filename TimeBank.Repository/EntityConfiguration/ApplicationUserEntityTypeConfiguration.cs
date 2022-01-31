@@ -23,6 +23,8 @@ namespace TimeBank.Repository.EntityConfiguration
                 .HasMaxLength(25);
             builder.Property(a => a.ZipCode)
                 .HasMaxLength(25);
+            builder.Property(a => a.Phone)
+                .HasMaxLength(25);
             builder.Property(a => a.Biography)
                 .HasMaxLength(500);
             builder.Property(a => a.Facebook)
