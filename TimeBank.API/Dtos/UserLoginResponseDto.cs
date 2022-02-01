@@ -16,7 +16,7 @@ namespace TimeBank.API.Dtos
         public string City { get; set; }
         public string State { get; set; }
         public string ZipCode { get; set; }
-        public DateOnly Birthday { get; set; }
+        public DateTime Birthday { get; set; }
         public bool IsApproved { get; set; }
         public string Token { get; set; }
     }

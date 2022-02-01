@@ -122,7 +122,7 @@ namespace TimeBank.API.Controllers
                 ZipCode = user.ZipCode,
                 Phone = user.Phone,
                 Email = user.Email,
-                Birthday = DateOnly.FromDateTime(user.Birthday),
+                Birthday = user.Birthday,
                 IsApproved = user.IsApproved,
                 Token = token
             };
