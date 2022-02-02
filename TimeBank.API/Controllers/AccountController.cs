@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -112,17 +111,9 @@ namespace TimeBank.API.Controllers
             {
                 IsAuthenticationSuccessful = true,
                 ErrorMessage = string.Empty,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
                 DisplayName = user.FirstName,
                 UserName = user.UserName,
-                StreetAddress = user.StreetAddress,
-                City = user.City,
-                State = user.State,
-                ZipCode = user.ZipCode,
-                Phone = user.Phone,
                 Email = user.Email,
-                Birthday = user.Birthday,
                 IsApproved = user.IsApproved,
                 Token = token
             };
