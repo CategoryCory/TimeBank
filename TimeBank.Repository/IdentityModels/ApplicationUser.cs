@@ -13,7 +13,6 @@ namespace TimeBank.Repository.IdentityModels
         public string City { get; set; }
         public string State { get; set; }
         public string ZipCode { get; set; }
-        public string Phone { get; set; }
         public DateTime Birthday { get; set; }
         public string Biography { get; set; }
         public string Facebook { get; set; }

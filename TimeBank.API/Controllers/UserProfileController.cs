@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using System.Net;
 using System.Threading.Tasks;
 using TimeBank.API.Dtos;
 using TimeBank.Repository.IdentityModels;
@@ -16,11 +18,15 @@ namespace TimeBank.API.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IMapper _mapper;
+        private readonly ILogger<UserProfileController> _logger;
 
-        public UserProfileController(UserManager<ApplicationUser> userManager, IMapper mapper)
+        public UserProfileController(UserManager<ApplicationUser> userManager,
+                                     IMapper mapper,
+                                     ILogger<UserProfileController> logger)
         {
             _userManager = userManager;
             _mapper = mapper;
+            _logger = logger;
         }
 
         // GET api/<UserProfileController>/test@test.com
@@ -33,20 +39,21 @@ namespace TimeBank.API.Controllers
 
             if (user is null) return NotFound();
 
-            var userProfileDto = _mapper.Map<UserProfileDto>(user);
+            var userProfileDto = _mapper.Map<UserProfileResponseDto>(user);
             return Ok(userProfileDto);
         }
 
         // PUT api/<UserProfileController>/test@test.com
         [HttpPut("{email}")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> UpdateProfileByEmailAsync(string email, [FromBody] UserProfileDto userProfileDto)
+        public async Task<IActionResult> UpdateProfileByEmailAsync(string email, [FromBody] UserProfileUpdateDto userProfileDto)
         {
-            var user = await _userManager.FindByEmailAsync(email);
+            string decodedEmail = WebUtility.UrlDecode(email);
+            var user = await _userManager.FindByEmailAsync(decodedEmail);
 
             if (user is null) return NotFound();
 
-            user = _mapper.Map<ApplicationUser>(userProfileDto);
+            _mapper.Map(userProfileDto, user);
 
             await _userManager.UpdateAsync(user);
             return Ok(userProfileDto);
