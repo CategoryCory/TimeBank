@@ -1,11 +1,15 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using TimeBank.API.Dtos;
+using TimeBank.Repository.IdentityModels;
 using TimeBank.Repository.Models;
 using TimeBank.Services;
 using TimeBank.Services.Contracts;
@@ -16,45 +20,54 @@ namespace TimeBank.API.Controllers
     [ApiController]
     public class JobsController : ControllerBase
     {
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly IJobService _jobService;
         private readonly IMapper _mapper;
+        private readonly ILogger<JobsController> _logger;
 
-        public JobsController(IJobService jobService, IMapper mapper)
+        public JobsController(UserManager<ApplicationUser> userManager,
+                              IJobService jobService,
+                              IMapper mapper,
+                              ILogger<JobsController> logger)
         {
+            _userManager = userManager;
             _jobService = jobService;
             _mapper = mapper;
+            _logger = logger;
         }
 
-        // GET: api/<JobsController>
+        // GET: api/<JobsController>/?userId=GUID
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> GetAllJobs()
+        public async Task<IActionResult> GetAllJobs([FromQuery] string userId)
         {
-            var jobs = await _jobService.GetAllJobsAsync();
+            bool isAuthenticatedAndApproved = await CheckIfAuthenticatedAndApproved(User.FindFirstValue(ClaimTypes.Email));
 
-            if (jobs.Count == 0)
-            {
-                return NoContent();
-            }
+            var jobs = await _jobService.GetAllJobsAsync(userId, isAuthenticatedAndApproved);
 
-            return Ok(jobs);
+            if (jobs.Count == 0) return NoContent();
+
+            var jobResponseDtos = _mapper.Map<List<JobResponseDto>>(jobs);
+
+            return Ok(jobResponseDtos);
         }
 
-        // GET api/<JobsController>/5
+        // GET api/<JobsController>/GUID
         [HttpGet("{displayId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetById(Guid displayId)
         {
-            var job = await _jobService.GetJobByDisplayIdAsync(displayId);
+            bool isAuthenticatedAndApproved = await CheckIfAuthenticatedAndApproved(User.FindFirstValue(ClaimTypes.Email));
 
-            if (job is null)
-            {
-                return NotFound();
-            }
+            var job = await _jobService.GetJobByDisplayIdAsync(displayId, isAuthenticatedAndApproved);
 
-            return Ok(job);
+            if (job is null) return NotFound();
+
+            var jobResponseDto = _mapper.Map<JobResponseDto>(job);
+
+            return Ok(jobResponseDto);
         }
 
         // POST api/<JobsController>
@@ -116,6 +129,19 @@ namespace TimeBank.API.Controllers
             }
 
             return NoContent();
+        }
+
+        private async Task<bool> CheckIfAuthenticatedAndApproved(string userEmail)
+        {
+            if (string.IsNullOrEmpty(userEmail)) return false;
+
+            var currentUser = await _userManager.FindByEmailAsync(userEmail);
+            if (currentUser is not null && currentUser.IsApproved)
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

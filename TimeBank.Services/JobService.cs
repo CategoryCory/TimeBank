@@ -21,24 +21,36 @@ namespace TimeBank.Services
             _jobValidator = new JobValidator();
         }
 
-        public async Task<List<Job>> GetAllJobsAsync()
+        public async Task<List<Job>> GetAllJobsAsync(string userId = null, bool includeUserData = false)
         {
-            return await _context.Jobs.AsNoTracking().ToListAsync();
+            var jobs = _context.Jobs.AsNoTracking();
+
+            if (!string.IsNullOrWhiteSpace(userId))
+                jobs = jobs.Where(j => j.CreatedById == userId);
+
+            if (includeUserData)
+                jobs = jobs.Include(j => j.CreatedBy);
+
+            return await jobs.Include(j => j.JobCategory)
+                             .OrderByDescending(j => j.CreatedOn)
+                             .ToListAsync();
         }
 
-        public async Task<Job> GetJobByIdAsync(int id)
+        public async Task<Job> GetJobByDisplayIdAsync(Guid displayId, bool includeUserData = false)
         {
-            return await _context.Jobs.FindAsync(id);
-        }
+            var jobs = _context.Jobs.AsNoTracking();
 
-        public async Task<Job> GetJobByDisplayIdAsync(Guid displayId)
-        {
-            return await _context.Jobs.FirstOrDefaultAsync(j => j.DisplayId == displayId);
+            if (includeUserData)
+                jobs = jobs.Include(j => j.CreatedBy);
+
+            return await jobs.Include(j => j.JobCategory)
+                             .SingleOrDefaultAsync(j => j.DisplayId == displayId);
         }
 
         public async Task<ApplicationResult> AddJobAsync(Job job)
         {
             job.DisplayId = Guid.NewGuid();
+            job.JobStatus = JobStatus.Available;
 
             ValidationResult result = _jobValidator.Validate(job);
 

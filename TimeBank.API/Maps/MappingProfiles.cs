@@ -10,6 +10,10 @@ namespace TimeBank.API.Maps
         public MappingProfiles()
         {
             CreateMap<Job, JobDto>().ReverseMap();
+            CreateMap<Job, JobResponseDto>()
+                .ForMember(dest => dest.JobCategory, opt => opt.MapFrom(src => src.JobCategory.JobCategoryName))
+                .ForMember(dest => dest.CreatedById, opt => opt.MapFrom(src => src.CreatedBy.Id))
+                .ForMember(dest => dest.CreatedBy, opt => opt.MapFrom(src => $"{src.CreatedBy.FirstName} {src.CreatedBy.LastName}"));
             CreateMap<JobCategory, JobCategoryDto>().ReverseMap();
             CreateMap<TokenTransaction, TokenTransactionDto>().ReverseMap();
             CreateMap<UserRegistrationDto, ApplicationUser>()
