@@ -89,6 +89,22 @@ namespace TimeBank.API.Controllers
             return StatusCode(StatusCodes.Status201Created);
         }
 
+        [HttpPut("approve/{userId}")]
+        [Authorize(Roles = "Admin")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> ApproveUser(string userId)
+        {
+            var userToApprove = await _userManager.FindByIdAsync(userId);
+
+            if (userToApprove is null) return NotFound();
+
+            await _userManager.AddToRoleAsync(userToApprove, "User");
+            await _userManager.RemoveFromRoleAsync(userToApprove, "Pending");
+
+            return NoContent();
+        }
+
         [HttpGet]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
