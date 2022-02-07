@@ -102,6 +102,9 @@ namespace TimeBank.API.Controllers
             await _userManager.AddToRoleAsync(userToApprove, "User");
             await _userManager.RemoveFromRoleAsync(userToApprove, "Pending");
 
+            userToApprove.IsApproved = true;
+            await _userManager.UpdateAsync(userToApprove);
+
             return NoContent();
         }
 
