@@ -12,8 +12,8 @@ using TimeBank.Repository;
 namespace TimeBank.Repository.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220123215332_AddJobCategories")]
-    partial class AddJobCategories
+    [Migration("20220207020653_ChangeJobApplicationForeignKey")]
+    partial class ChangeJobApplicationForeignKey
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -49,22 +49,6 @@ namespace TimeBank.Repository.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "dd0b8920-1c72-4bfa-8ea1-b6736576a7b3",
-                            ConcurrencyStamp = "a71b5d1e-a3d0-444f-ab92-10355a29ecf1",
-                            Name = "Admin",
-                            NormalizedName = "ADMIN"
-                        },
-                        new
-                        {
-                            Id = "3f1ba4bc-5e9b-414a-97f2-3d6cc193e10c",
-                            ConcurrencyStamp = "6880f1a1-ceff-44e1-be05-d1625a54c31a",
-                            Name = "User",
-                            NormalizedName = "USER"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -185,6 +169,9 @@ namespace TimeBank.Repository.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
+                    b.Property<DateTime>("Birthday")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("City")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
@@ -208,6 +195,12 @@ namespace TimeBank.Repository.Migrations
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("FullName")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .HasComputedColumnSql("[FirstName] + ' ' + [LastName]");
 
                     b.Property<string>("Instagram")
                         .HasMaxLength(200)
@@ -340,6 +333,44 @@ namespace TimeBank.Repository.Migrations
                     b.HasIndex("JobCategoryId");
 
                     b.ToTable("Jobs");
+                });
+
+            modelBuilder.Entity("TimeBank.Repository.Models.JobApplication", b =>
+                {
+                    b.Property<int>("JobApplicationId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("JobApplicationId"), 1L, 1);
+
+                    b.Property<string>("ApplicantId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("getdate()");
+
+                    b.Property<Guid>("JobDisplayId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("ResolvedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)")
+                        .HasDefaultValue("Pending");
+
+                    b.HasKey("JobApplicationId");
+
+                    b.HasIndex("ApplicantId");
+
+                    b.HasIndex("JobDisplayId");
+
+                    b.ToTable("JobApplications");
                 });
 
             modelBuilder.Entity("TimeBank.Repository.Models.JobCategory", b =>
@@ -491,6 +522,24 @@ namespace TimeBank.Repository.Migrations
                     b.Navigation("JobCategory");
                 });
 
+            modelBuilder.Entity("TimeBank.Repository.Models.JobApplication", b =>
+                {
+                    b.HasOne("TimeBank.Repository.IdentityModels.ApplicationUser", "Applicant")
+                        .WithMany("JobApplications")
+                        .HasForeignKey("ApplicantId");
+
+                    b.HasOne("TimeBank.Repository.Models.Job", "Job")
+                        .WithMany("JobApplications")
+                        .HasForeignKey("JobDisplayId")
+                        .HasPrincipalKey("DisplayId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Applicant");
+
+                    b.Navigation("Job");
+                });
+
             modelBuilder.Entity("TimeBank.Repository.Models.TokenBalance", b =>
                 {
                     b.HasOne("TimeBank.Repository.IdentityModels.ApplicationUser", "User")
@@ -517,6 +566,8 @@ namespace TimeBank.Repository.Migrations
 
             modelBuilder.Entity("TimeBank.Repository.IdentityModels.ApplicationUser", b =>
                 {
+                    b.Navigation("JobApplications");
+
                     b.Navigation("Jobs");
 
                     b.Navigation("ReceivedTransactions");
@@ -524,6 +575,11 @@ namespace TimeBank.Repository.Migrations
                     b.Navigation("SentTransactions");
 
                     b.Navigation("TokenBalance");
+                });
+
+            modelBuilder.Entity("TimeBank.Repository.Models.Job", b =>
+                {
+                    b.Navigation("JobApplications");
                 });
 
             modelBuilder.Entity("TimeBank.Repository.Models.JobCategory", b =>

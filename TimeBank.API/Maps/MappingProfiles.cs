@@ -13,7 +13,11 @@ namespace TimeBank.API.Maps
             CreateMap<Job, JobResponseDto>()
                 .ForMember(dest => dest.JobCategory, opt => opt.MapFrom(src => src.JobCategory.JobCategoryName))
                 .ForMember(dest => dest.CreatedById, opt => opt.MapFrom(src => src.CreatedBy.Id))
-                .ForMember(dest => dest.CreatedBy, opt => opt.MapFrom(src => $"{src.CreatedBy.FirstName} {src.CreatedBy.LastName}"));
+                .ForMember(dest => dest.CreatedBy, opt => opt.MapFrom(src => src.CreatedBy.FullName));
+            CreateMap<JobApplication, JobApplicationResponseDto>()
+                .ForMember(dest => dest.JobName, opt => opt.MapFrom(src => src.Job.JobName))
+                .ForMember(dest => dest.JobCreatedByName, opt => opt.MapFrom(src => src.Job.CreatedBy.FullName))
+                .ForMember(dest => dest.ApplicantName, opt => opt.MapFrom(src => src.Applicant.FullName));
             CreateMap<JobCategory, JobCategoryDto>().ReverseMap();
             CreateMap<TokenTransaction, TokenTransactionDto>().ReverseMap();
             CreateMap<UserRegistrationDto, ApplicationUser>()

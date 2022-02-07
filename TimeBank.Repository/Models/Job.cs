@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using TimeBank.Repository.IdentityModels;
 
 namespace TimeBank.Repository.Models
@@ -26,5 +27,7 @@ namespace TimeBank.Repository.Models
 
         public string CreatedById { get; set; }
         public ApplicationUser CreatedBy { get; set; }
+
+        public ICollection<JobApplication> JobApplications { get; set; }
     }
 }

@@ -9,6 +9,7 @@ namespace TimeBank.Repository.IdentityModels
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public string FullName { get; private set; }
         public string StreetAddress { get; set; }
         public string City { get; set; }
         public string State { get; set; }
@@ -25,6 +26,7 @@ namespace TimeBank.Repository.IdentityModels
 
         public TokenBalance TokenBalance { get; set; }
 
+        public ICollection<JobApplication> JobApplications { get; set; }
         public ICollection<TokenTransaction> SentTransactions { get; set; }
         public ICollection<TokenTransaction> ReceivedTransactions { get; set; }
     }

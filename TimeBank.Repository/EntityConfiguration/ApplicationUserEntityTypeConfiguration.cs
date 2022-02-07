@@ -15,6 +15,9 @@ namespace TimeBank.Repository.EntityConfiguration
             builder.Property(a => a.LastName)
                 .IsRequired()
                 .HasMaxLength(50);
+            builder.Property(a => a.FullName)
+                .HasMaxLength(100)
+                .HasComputedColumnSql("[FirstName] + ' ' + [LastName]");
             builder.Property(a => a.StreetAddress)
                 .HasMaxLength(100);
             builder.Property(a => a.City)

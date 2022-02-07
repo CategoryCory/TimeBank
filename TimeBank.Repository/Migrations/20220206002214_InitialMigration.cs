@@ -34,6 +34,7 @@ namespace TimeBank.Repository.Migrations
                     City = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     State = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: true),
                     ZipCode = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: true),
+                    Birthday = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Biography = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     Facebook = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
                     Twitter = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
@@ -58,6 +59,20 @@ namespace TimeBank.Repository.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "JobCategories",
+                columns: table => new
+                {
+                    JobCategoryId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    JobCategoryName = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
+                    JobCategorySlug = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_JobCategories", x => x.JobCategoryId);
                 });
 
             migrationBuilder.CreateTable(
@@ -167,30 +182,6 @@ namespace TimeBank.Repository.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Jobs",
-                columns: table => new
-                {
-                    JobId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    DisplayId = table.Column<Guid>(type: "uniqueidentifier", fixedLength: true, maxLength: 36, nullable: false),
-                    JobName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
-                    ExpiresOn = table.Column<DateTime>(type: "date", nullable: false),
-                    JobStatus = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false, defaultValue: "Available"),
-                    CreatedOn = table.Column<DateTime>(type: "date", nullable: false, defaultValueSql: "getdate()"),
-                    CreatedById = table.Column<string>(type: "nvarchar(450)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Jobs", x => x.JobId);
-                    table.ForeignKey(
-                        name: "FK_Jobs_AspNetUsers_CreatedById",
-                        column: x => x.CreatedById,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "TokenBalances",
                 columns: table => new
                 {
@@ -235,15 +226,74 @@ namespace TimeBank.Repository.Migrations
                         principalColumn: "Id");
                 });
 
-            migrationBuilder.InsertData(
-                table: "AspNetRoles",
-                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "85e8872d-ef53-4d30-ae27-38f44733cd7f", "0ad34e75-e22d-44c9-8584-5efc7e1a5574", "Admin", "ADMIN" });
+            migrationBuilder.CreateTable(
+                name: "Jobs",
+                columns: table => new
+                {
+                    JobId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    DisplayId = table.Column<Guid>(type: "uniqueidentifier", fixedLength: true, maxLength: 36, nullable: false),
+                    JobName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
+                    ExpiresOn = table.Column<DateTime>(type: "date", nullable: false),
+                    JobStatus = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false, defaultValue: "Available"),
+                    CreatedOn = table.Column<DateTime>(type: "date", nullable: false, defaultValueSql: "getdate()"),
+                    JobCategoryId = table.Column<int>(type: "int", nullable: false),
+                    CreatedById = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Jobs", x => x.JobId);
+                    table.ForeignKey(
+                        name: "FK_Jobs_AspNetUsers_CreatedById",
+                        column: x => x.CreatedById,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Jobs_JobCategories_JobCategoryId",
+                        column: x => x.JobCategoryId,
+                        principalTable: "JobCategories",
+                        principalColumn: "JobCategoryId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "JobApplications",
+                columns: table => new
+                {
+                    JobApplicationId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Status = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false, defaultValue: "Pending"),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
+                    ResolvedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    JobId = table.Column<int>(type: "int", nullable: false),
+                    ApplicantId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_JobApplications", x => x.JobApplicationId);
+                    table.ForeignKey(
+                        name: "FK_JobApplications_AspNetUsers_ApplicantId",
+                        column: x => x.ApplicantId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_JobApplications_Jobs_JobId",
+                        column: x => x.JobId,
+                        principalTable: "Jobs",
+                        principalColumn: "JobId",
+                        onDelete: ReferentialAction.Cascade);
+                });
 
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "a827432a-d157-4f69-a275-5848946c9c67", "7adb7309-bc42-4f8f-94e5-c068faa53ede", "User", "USER" });
+                values: new object[] { "23a7bd64-afb5-427c-b3e4-ef6add812392", "00e0e959-a8cd-413a-899e-572ab0ebc74d", "Admin", "ADMIN" });
+
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[] { "ea7a4ef3-f230-491a-be15-aee9eb5a5a6d", "29a8c5ed-ca65-4a67-82a6-d529ced73c95", "User", "USER" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -285,9 +335,24 @@ namespace TimeBank.Repository.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_JobApplications_ApplicantId",
+                table: "JobApplications",
+                column: "ApplicantId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_JobApplications_JobId",
+                table: "JobApplications",
+                column: "JobId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Jobs_CreatedById",
                 table: "Jobs",
                 column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Jobs_JobCategoryId",
+                table: "Jobs",
+                column: "JobCategoryId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TokenBalances_UserId",
@@ -325,7 +390,7 @@ namespace TimeBank.Repository.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Jobs");
+                name: "JobApplications");
 
             migrationBuilder.DropTable(
                 name: "TokenBalances");
@@ -337,7 +402,13 @@ namespace TimeBank.Repository.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
+                name: "Jobs");
+
+            migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "JobCategories");
         }
     }
 }
