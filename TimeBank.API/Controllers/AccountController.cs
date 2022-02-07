@@ -76,13 +76,13 @@ namespace TimeBank.API.Controllers
                 return BadRequest(errors);
             }
 
-            if (await _roleManager.RoleExistsAsync("User") == false)
+            if (await _roleManager.RoleExistsAsync("Pending") == false)
             {
-                var userRole = new IdentityRole { Name = "User", NormalizedName = "USER" };
+                var userRole = new IdentityRole { Name = "Pending", NormalizedName = "PENDING" };
                 await _roleManager.CreateAsync(userRole);
             }
 
-            await _userManager.AddToRoleAsync(user, "User");
+            await _userManager.AddToRoleAsync(user, "Pending");
 
             await _tokenBalanceService.CreateNewBalance(user.Id);
 

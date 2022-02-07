@@ -12,8 +12,8 @@ using TimeBank.Repository;
 namespace TimeBank.Repository.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220207020653_ChangeJobApplicationForeignKey")]
-    partial class ChangeJobApplicationForeignKey
+    [Migration("20220207150436_InitialMigration")]
+    partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -49,6 +49,29 @@ namespace TimeBank.Repository.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "46f65b2d-b911-4cf0-9bbf-57254b552f1a",
+                            ConcurrencyStamp = "c2653254-a56a-4f36-90d6-f2757d4a013c",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = "b41b6076-855c-432d-8b04-99b4aaced362",
+                            ConcurrencyStamp = "dd7123d0-e5b1-4527-a0c9-91d4691d29a8",
+                            Name = "User",
+                            NormalizedName = "USER"
+                        },
+                        new
+                        {
+                            Id = "78d75095-f0cf-497e-aa3f-5035af922564",
+                            ConcurrencyStamp = "58cfecf5-e669-49d6-9d6e-2253a433e3df",
+                            Name = "Pending",
+                            NormalizedName = "PENDING"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -454,6 +477,41 @@ namespace TimeBank.Repository.Migrations
                     b.ToTable("TokenTransactions");
                 });
 
+            modelBuilder.Entity("TimeBank.Repository.Models.UserRating", b =>
+                {
+                    b.Property<int>("UserRatingId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserRatingId"), 1L, 1);
+
+                    b.Property<string>("AuthorId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Comments")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("getdate()");
+
+                    b.Property<double>("Rating")
+                        .HasColumnType("float");
+
+                    b.Property<string>("RevieweeId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("UserRatingId");
+
+                    b.HasIndex("AuthorId");
+
+                    b.HasIndex("RevieweeId");
+
+                    b.ToTable("UserRating");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -564,11 +622,30 @@ namespace TimeBank.Repository.Migrations
                     b.Navigation("Sender");
                 });
 
+            modelBuilder.Entity("TimeBank.Repository.Models.UserRating", b =>
+                {
+                    b.HasOne("TimeBank.Repository.IdentityModels.ApplicationUser", "Author")
+                        .WithMany("AuthoredRatings")
+                        .HasForeignKey("AuthorId");
+
+                    b.HasOne("TimeBank.Repository.IdentityModels.ApplicationUser", "Reviewee")
+                        .WithMany("ReceivedRatings")
+                        .HasForeignKey("RevieweeId");
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Reviewee");
+                });
+
             modelBuilder.Entity("TimeBank.Repository.IdentityModels.ApplicationUser", b =>
                 {
+                    b.Navigation("AuthoredRatings");
+
                     b.Navigation("JobApplications");
 
                     b.Navigation("Jobs");
+
+                    b.Navigation("ReceivedRatings");
 
                     b.Navigation("ReceivedTransactions");
 

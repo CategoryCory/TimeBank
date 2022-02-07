@@ -47,6 +47,29 @@ namespace TimeBank.Repository.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "46f65b2d-b911-4cf0-9bbf-57254b552f1a",
+                            ConcurrencyStamp = "c2653254-a56a-4f36-90d6-f2757d4a013c",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = "b41b6076-855c-432d-8b04-99b4aaced362",
+                            ConcurrencyStamp = "dd7123d0-e5b1-4527-a0c9-91d4691d29a8",
+                            Name = "User",
+                            NormalizedName = "USER"
+                        },
+                        new
+                        {
+                            Id = "78d75095-f0cf-497e-aa3f-5035af922564",
+                            ConcurrencyStamp = "58cfecf5-e669-49d6-9d6e-2253a433e3df",
+                            Name = "Pending",
+                            NormalizedName = "PENDING"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
