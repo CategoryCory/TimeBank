@@ -22,12 +22,13 @@ namespace TimeBank.Repository.IdentityModels
         public string LinkedIn { get; set; }
         public bool IsApproved { get; set; }
 
-        public ICollection<Job> Jobs { get; set; }
-
         public TokenBalance TokenBalance { get; set; }
 
+        public ICollection<Job> Jobs { get; set; }
         public ICollection<JobApplication> JobApplications { get; set; }
         public ICollection<TokenTransaction> SentTransactions { get; set; }
         public ICollection<TokenTransaction> ReceivedTransactions { get; set; }
+        public ICollection<UserRating> AuthoredRatings { get; set; }
+        public ICollection<UserRating> ReceivedRatings { get; set; }
     }
 }
