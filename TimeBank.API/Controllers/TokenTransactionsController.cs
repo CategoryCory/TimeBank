@@ -18,11 +18,15 @@ namespace TimeBank.API.Controllers
     public class TokenTransactionsController : ControllerBase
     {
         private readonly ITokenTransactionService _tokenTransactionService;
+        private readonly ITokenBalanceService _tokenBalanceService;
         private readonly IMapper _mapper;
 
-        public TokenTransactionsController(ITokenTransactionService tokenTransactionService, IMapper mapper)
+        public TokenTransactionsController(ITokenTransactionService tokenTransactionService,
+                                           ITokenBalanceService tokenBalanceService,
+                                           IMapper mapper)
         {
             _tokenTransactionService = tokenTransactionService;
+            _tokenBalanceService = tokenBalanceService;
             _mapper = mapper;
         }
 
@@ -38,6 +42,18 @@ namespace TimeBank.API.Controllers
             List<TokenTransactionResponseDto> transactionDtos = TokenTransactionResponseMap.MapToDto(transactions);
 
             return Ok(transactionDtos);
+        }
+        
+        [HttpGet("balance/{userId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetCurrentBalanceByUserId(string userId)
+        {
+            var tokenBalance = await _tokenBalanceService.GetBalanceByUserId(userId);
+
+            if (tokenBalance is null) return NotFound();
+
+            return Ok(new TokenBalanceResponseDto { CurrentBalance = tokenBalance.CurrentBalance });
         }
 
         [HttpPost]

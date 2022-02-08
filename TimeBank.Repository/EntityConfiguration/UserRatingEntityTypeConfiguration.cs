@@ -9,7 +9,8 @@ namespace TimeBank.Repository.EntityConfiguration
         public void Configure(EntityTypeBuilder<UserRating> builder)
         {
             builder.Property(r => r.Rating)
-                .IsRequired();
+                .IsRequired()
+                .HasDefaultValue(0);
             builder.Property(r => r.Comments)
                 .HasMaxLength(200);
             builder.Property(r => r.CreatedOn)
