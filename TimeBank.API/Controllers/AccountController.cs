@@ -130,6 +130,7 @@ namespace TimeBank.API.Controllers
             {
                 IsAuthenticationSuccessful = true,
                 ErrorMessage = string.Empty,
+                UserId = user.Id,
                 DisplayName = user.FirstName,
                 UserName = user.UserName,
                 Email = user.Email,
