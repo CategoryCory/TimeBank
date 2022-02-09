@@ -53,7 +53,7 @@ namespace TimeBank.API.Controllers
 
             if (tokenBalance is null) return NotFound();
 
-            return Ok(new TokenBalanceResponseDto { CurrentBalance = tokenBalance.CurrentBalance });
+            return Ok(new TokenBalanceResponseDto { UserId = tokenBalance.UserId, CurrentBalance = tokenBalance.CurrentBalance });
         }
 
         [HttpPost]
