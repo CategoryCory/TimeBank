@@ -12,7 +12,7 @@ using TimeBank.Services.Contracts;
 namespace TimeBank.API.Controllers
 {
     [Route("api/[controller]")]
-    [Authorize]
+    //[Authorize]
     [ApiController]
     public class UserRatingsController : ControllerBase
     {
@@ -30,7 +30,7 @@ namespace TimeBank.API.Controllers
         public async Task<IActionResult> GetAverageRatingByUserId(string userId)
         {
             var averageRating = await _userRatingService.GetAverageRatingByUserIdAsync(userId);
-            return Ok(averageRating);
+            return Ok(new UserAverageRatingResponseDto { UserId = userId, AverageRating = averageRating });
         }
 
         [HttpGet("received/{userId}")]

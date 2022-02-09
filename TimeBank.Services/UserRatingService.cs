@@ -32,7 +32,11 @@ namespace TimeBank.Services
 
         public async Task<double> GetAverageRatingByUserIdAsync(string userId)
         {
-            return await _context.UserRatings.Where(r => r.RevieweeId == userId).AverageAsync(r => r.Rating);
+            var averateRating = (await _context.UserRatings.Where(r => r.RevieweeId == userId).AverageAsync(r => (double?)r.Rating)) ?? 0;
+
+            _logger.LogInformation("The average rating is {}.", averateRating);
+
+            return averateRating;
         }
 
         public async Task<ApplicationResult> AddRatingAsync(UserRating userRating)
