@@ -1,15 +1,12 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using TimeBank.API.Dtos;
-using TimeBank.Repository.IdentityModels;
 using TimeBank.Repository.Models;
 using TimeBank.Services;
 using TimeBank.Services.Contracts;
@@ -20,20 +17,13 @@ namespace TimeBank.API.Controllers
     [ApiController]
     public class JobsController : ControllerBase
     {
-        private readonly UserManager<ApplicationUser> _userManager;
         private readonly IJobService _jobService;
         private readonly IMapper _mapper;
-        private readonly ILogger<JobsController> _logger;
 
-        public JobsController(UserManager<ApplicationUser> userManager,
-                              IJobService jobService,
-                              IMapper mapper,
-                              ILogger<JobsController> logger)
+        public JobsController(IJobService jobService, IMapper mapper)
         {
-            _userManager = userManager;
             _jobService = jobService;
             _mapper = mapper;
-            _logger = logger;
         }
 
         // GET: api/<JobsController>/?userId=GUID
@@ -42,7 +32,10 @@ namespace TimeBank.API.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> GetAllJobs([FromQuery] string userId)
         {
-            bool isAuthenticatedAndApproved = await CheckIfAuthenticatedAndApproved(User.FindFirstValue(ClaimTypes.Email));
+            string userRole = User.FindFirstValue(ClaimTypes.Role);
+
+            bool isAuthenticatedAndApproved = !string.IsNullOrWhiteSpace(userRole) && userRole != "Pending";
+            //bool isAuthenticatedAndApproved = await CheckIfAuthenticatedAndApproved(User.FindFirstValue(ClaimTypes.Email));
 
             var jobs = await _jobService.GetAllJobsAsync(userId, isAuthenticatedAndApproved);
 
@@ -59,7 +52,11 @@ namespace TimeBank.API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetById(Guid displayId)
         {
-            bool isAuthenticatedAndApproved = await CheckIfAuthenticatedAndApproved(User.FindFirstValue(ClaimTypes.Email));
+            string userRole = User.FindFirstValue(ClaimTypes.Role);
+
+            bool isAuthenticatedAndApproved = !string.IsNullOrWhiteSpace(userRole) && userRole != "Pending";
+
+            //bool isAuthenticatedAndApproved = await CheckIfAuthenticatedAndApproved(User.FindFirstValue(ClaimTypes.Email));
 
             var job = await _jobService.GetJobByDisplayIdAsync(displayId, isAuthenticatedAndApproved);
 
@@ -72,7 +69,7 @@ namespace TimeBank.API.Controllers
 
         // POST api/<JobsController>
         [HttpPost]
-        [Authorize]
+        [Authorize(Roles = "Admin,User")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreateNewJob([FromBody] JobDto jobDto)
@@ -91,7 +88,7 @@ namespace TimeBank.API.Controllers
 
         // PUT api/<JobsController>/5
         [HttpPut]
-        [Authorize]
+        [Authorize(Roles = "Admin,User")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -116,7 +113,7 @@ namespace TimeBank.API.Controllers
 
         // DELETE api/<JobsController>/5
         [HttpDelete("{displayId}")]
-        [Authorize]
+        [Authorize(Roles = "Admin,User")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteJob(Guid displayId)
@@ -129,19 +126,6 @@ namespace TimeBank.API.Controllers
             }
 
             return NoContent();
-        }
-
-        private async Task<bool> CheckIfAuthenticatedAndApproved(string userEmail)
-        {
-            if (string.IsNullOrEmpty(userEmail)) return false;
-
-            var currentUser = await _userManager.FindByEmailAsync(userEmail);
-            if (currentUser is not null && currentUser.IsApproved)
-            {
-                return true;
-            }
-
-            return false;
         }
     }
 }
