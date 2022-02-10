@@ -14,6 +14,7 @@ namespace TimeBank.Repository
         public DbSet<TokenBalance> TokenBalances { get; set; }
         public DbSet<TokenTransaction> TokenTransactions { get; set; }
         public DbSet<UserRating> UserRatings { get; set; }
+        public DbSet<UserSkill> UserSkills { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
