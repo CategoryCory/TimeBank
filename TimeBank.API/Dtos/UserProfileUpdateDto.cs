@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace TimeBank.API.Dtos
@@ -34,5 +35,7 @@ namespace TimeBank.API.Dtos
 
         [MaxLength(500, ErrorMessage = "Biography cannot be greater than 500 characters.")]
         public string Biography { get; set; }
+
+        public ICollection<UserSkillsDto> Skills { get; set; }
     }
 }

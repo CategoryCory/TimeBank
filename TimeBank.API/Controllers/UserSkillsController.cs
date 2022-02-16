@@ -42,11 +42,11 @@ namespace TimeBank.API.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> AddNewSkill([FromBody] UserSkillsDto userSkillsDto)
+        public async Task<IActionResult> AddNewSkillRange([FromBody] ICollection<UserSkillsDto> userSkillsDtos)
         {
-            var skillToAdd = _mapper.Map<UserSkill>(userSkillsDto);
+            var skillsToAdd = _mapper.Map<List<UserSkill>>(userSkillsDtos);
 
-            ApplicationResult result = await _userSkillService.AddSkillAsync(skillToAdd);
+            ApplicationResult result = await _userSkillService.AddSkillRangeAsync(skillsToAdd);
 
             if (!result.IsSuccess) return BadRequest(result.Errors);
 

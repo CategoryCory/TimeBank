@@ -27,24 +27,30 @@ namespace TimeBank.Services
             var skills = _context.UserSkills.AsNoTracking();
 
             if (!string.IsNullOrWhiteSpace(searchString))
-                skills = skills.Where(s => s.SkillName.Contains(searchString, StringComparison.InvariantCultureIgnoreCase));
+                skills = skills.Where(s => s.SkillName.Contains(searchString));
 
             return await skills.ToListAsync();
         }
 
-        public async Task<ApplicationResult> AddSkillAsync(UserSkill userSkill)
+        public async Task<ApplicationResult> AddSkillRangeAsync(List<UserSkill> userSkills)
         {
-            ValidationResult result = _validator.Validate(userSkill);
-
-            if (!result.IsValid)
+            foreach (var skill in userSkills)
             {
-                _logger.LogError("Could not create skill with name {}", userSkill?.SkillName);
+                ValidationResult result = _validator.Validate(skill);
 
-                return ApplicationResult.Failure(result.Errors.Select(err => err.ErrorMessage).ToList());
+                if (!result.IsValid)
+                {
+                    _logger.LogError("Could not create skill with name {}", skill?.SkillName);
+                    return ApplicationResult.Failure(result.Errors.Select(err => err.ErrorMessage).ToList());
+                }
+
+                if (string.IsNullOrWhiteSpace(skill.SkillNameSlug))
+                {
+                    skill.SkillNameSlug = skill.SkillName.Slugify();
+                }
             }
 
-            userSkill.SkillNameSlug = userSkill.SkillName.Slugify();
-            _context.UserSkills.Add(userSkill);
+            _context.UserSkills.AddRange(userSkills);
             await _context.SaveChangesAsync();
 
             return ApplicationResult.Success();

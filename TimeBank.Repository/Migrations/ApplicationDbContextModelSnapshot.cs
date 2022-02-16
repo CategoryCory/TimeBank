@@ -24,8 +24,8 @@ namespace TimeBank.Repository.Migrations
 
             modelBuilder.Entity("ApplicationUserUserSkill", b =>
                 {
-                    b.Property<int>("SkillsUserSkillId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("SkillsUserSkillId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("UsersId")
                         .HasColumnType("nvarchar(450)");
@@ -62,6 +62,29 @@ namespace TimeBank.Repository.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "bf22f3fe-5651-4f3e-bf0f-9fbc10cca40e",
+                            ConcurrencyStamp = "9d0dd1f4-dfc4-47ee-8c43-a946b03165af",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = "c445a418-718a-408f-8c06-50c8c648dd60",
+                            ConcurrencyStamp = "35ba4fa3-e81e-438d-a05a-19683a7c0ae5",
+                            Name = "User",
+                            NormalizedName = "USER"
+                        },
+                        new
+                        {
+                            Id = "e60d5633-16bf-42ca-8c1b-04fdb46ed888",
+                            ConcurrencyStamp = "400938ff-b52d-4b1e-9135-a78bd4588c1f",
+                            Name = "Pending",
+                            NormalizedName = "PENDING"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -506,11 +529,9 @@ namespace TimeBank.Repository.Migrations
 
             modelBuilder.Entity("TimeBank.Repository.Models.UserSkill", b =>
                 {
-                    b.Property<int>("UserSkillId")
+                    b.Property<Guid>("UserSkillId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserSkillId"), 1L, 1);
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("SkillName")
                         .IsRequired()
@@ -523,6 +544,9 @@ namespace TimeBank.Repository.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.HasKey("UserSkillId");
+
+                    b.HasIndex("SkillNameSlug")
+                        .IsUnique();
 
                     b.ToTable("UserSkills");
                 });

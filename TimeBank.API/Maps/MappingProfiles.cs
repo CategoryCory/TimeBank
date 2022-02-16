@@ -23,8 +23,9 @@ namespace TimeBank.API.Maps
             CreateMap<UserRegistrationDto, ApplicationUser>()
                 .ForMember(u => u.UserName, options => options.MapFrom(x => x.Email))
                 .ReverseMap();
-            CreateMap<UserProfileResponseDto, ApplicationUser>().ReverseMap();
-            CreateMap<UserProfileUpdateDto, ApplicationUser>().ReverseMap();
+            CreateMap<ApplicationUser, UserProfileResponseDto>();
+            CreateMap<UserProfileUpdateDto, ApplicationUser>()
+                .ForMember(u => u.Skills, act => act.Ignore());
             CreateMap<UserRatingsDto, UserRating>();
             CreateMap<UserRating, UserRatingsResponseDto>()
                 .ForMember(dest => dest.AuthorName, opt => opt.MapFrom(src => src.Author.FullName))

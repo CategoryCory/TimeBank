@@ -14,6 +14,8 @@ namespace TimeBank.Repository.EntityConfiguration
             builder.Property(s => s.SkillNameSlug)
                 .IsRequired()
                 .HasMaxLength(50);
+            builder.HasIndex(s => s.SkillNameSlug)
+                .IsUnique();
 
             builder.HasMany(s => s.Users)
                 .WithMany(u => u.Skills);

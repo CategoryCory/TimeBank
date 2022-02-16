@@ -12,7 +12,7 @@ using TimeBank.Repository;
 namespace TimeBank.Repository.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220207150436_InitialMigration")]
+    [Migration("20220215152433_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -23,6 +23,21 @@ namespace TimeBank.Repository.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+
+            modelBuilder.Entity("ApplicationUserUserSkill", b =>
+                {
+                    b.Property<Guid>("SkillsUserSkillId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("UsersId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("SkillsUserSkillId", "UsersId");
+
+                    b.HasIndex("UsersId");
+
+                    b.ToTable("ApplicationUserUserSkill");
+                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
@@ -53,22 +68,22 @@ namespace TimeBank.Repository.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "46f65b2d-b911-4cf0-9bbf-57254b552f1a",
-                            ConcurrencyStamp = "c2653254-a56a-4f36-90d6-f2757d4a013c",
+                            Id = "bf22f3fe-5651-4f3e-bf0f-9fbc10cca40e",
+                            ConcurrencyStamp = "9d0dd1f4-dfc4-47ee-8c43-a946b03165af",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "b41b6076-855c-432d-8b04-99b4aaced362",
-                            ConcurrencyStamp = "dd7123d0-e5b1-4527-a0c9-91d4691d29a8",
+                            Id = "c445a418-718a-408f-8c06-50c8c648dd60",
+                            ConcurrencyStamp = "35ba4fa3-e81e-438d-a05a-19683a7c0ae5",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "78d75095-f0cf-497e-aa3f-5035af922564",
-                            ConcurrencyStamp = "58cfecf5-e669-49d6-9d6e-2253a433e3df",
+                            Id = "e60d5633-16bf-42ca-8c1b-04fdb46ed888",
+                            ConcurrencyStamp = "400938ff-b52d-4b1e-9135-a78bd4588c1f",
                             Name = "Pending",
                             NormalizedName = "PENDING"
                         });
@@ -498,7 +513,9 @@ namespace TimeBank.Repository.Migrations
                         .HasDefaultValueSql("getdate()");
 
                     b.Property<double>("Rating")
-                        .HasColumnType("float");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("float")
+                        .HasDefaultValue(0.0);
 
                     b.Property<string>("RevieweeId")
                         .HasColumnType("nvarchar(450)");
@@ -509,7 +526,46 @@ namespace TimeBank.Repository.Migrations
 
                     b.HasIndex("RevieweeId");
 
-                    b.ToTable("UserRating");
+                    b.ToTable("UserRatings");
+                });
+
+            modelBuilder.Entity("TimeBank.Repository.Models.UserSkill", b =>
+                {
+                    b.Property<Guid>("UserSkillId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("SkillName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("SkillNameSlug")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("UserSkillId");
+
+                    b.HasIndex("SkillNameSlug")
+                        .IsUnique();
+
+                    b.ToTable("UserSkills");
+                });
+
+            modelBuilder.Entity("ApplicationUserUserSkill", b =>
+                {
+                    b.HasOne("TimeBank.Repository.Models.UserSkill", null)
+                        .WithMany()
+                        .HasForeignKey("SkillsUserSkillId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TimeBank.Repository.IdentityModels.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UsersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

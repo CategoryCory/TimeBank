@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using TimeBank.Repository.Models;
 
 namespace TimeBank.API.Dtos
 {
@@ -14,5 +16,6 @@ namespace TimeBank.API.Dtos
         public string ZipCode { get; set; }
         public DateTime Birthday { get; set; }
         public string Biography { get; set; }
+        public List<UserSkillsDto> Skills { get; set; }
     }
 }
