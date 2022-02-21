@@ -12,6 +12,12 @@ namespace TimeBank.Repository.Models
         Deleted
     }
 
+    public enum JobScheduleType
+    {
+        Open,
+        Custom
+    }
+
     public class Job
     {
         public int JobId { get; set; }
@@ -19,6 +25,7 @@ namespace TimeBank.Repository.Models
         public string JobName { get; set; }
         public string Description { get; set; }
         public DateTime ExpiresOn { get; set; }
+        public JobScheduleType JobScheduleType { get; set; }
         public JobStatus JobStatus { get; set; }
         public DateTime CreatedOn { get; set; }
 

@@ -18,6 +18,10 @@ namespace TimeBank.Repository.EntityConfiguration
             builder.Property(j => j.Description)
                 .IsRequired()
                 .HasMaxLength(250);
+            builder.Property(j => j.JobScheduleType)
+                .HasConversion<string>()
+                .HasMaxLength(20)
+                .HasDefaultValue(JobScheduleType.Open);
             builder.Property(j => j.JobStatus)
                 .HasConversion<string>()
                 .HasMaxLength(20)
