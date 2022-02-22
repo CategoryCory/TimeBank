@@ -36,5 +36,6 @@ namespace TimeBank.Repository.Models
         public ApplicationUser CreatedBy { get; set; }
 
         public ICollection<JobApplication> JobApplications { get; set; }
+        public ICollection<JobSchedule> JobSchedules { get; set; }
     }
 }

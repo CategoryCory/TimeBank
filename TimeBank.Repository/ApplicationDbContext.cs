@@ -11,6 +11,7 @@ namespace TimeBank.Repository
         public DbSet<Job> Jobs { get; set; }
         public DbSet<JobCategory> JobCategories { get; set; }
         public DbSet<JobApplication> JobApplications { get; set; }
+        public DbSet<JobSchedule> JobSchedules { get; set; }
         public DbSet<TokenBalance> TokenBalances { get; set; }
         public DbSet<TokenTransaction> TokenTransactions { get; set; }
         public DbSet<UserRating> UserRatings { get; set; }

@@ -49,7 +49,10 @@ namespace TimeBank.Services
 
         public async Task<ApplicationResult> AddJobAsync(Job job)
         {
-            job.DisplayId = Guid.NewGuid();
+            if (job.DisplayId == Guid.Empty)
+            {
+                job.DisplayId = Guid.NewGuid();
+            }
             job.JobStatus = JobStatus.Available;
 
             ValidationResult result = _jobValidator.Validate(job);

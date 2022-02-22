@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace TimeBank.API.Dtos
 {
     public class JobDto
     {
+        public Guid DisplayId { get; set; }
+
         [Required]
         [MaxLength(100, ErrorMessage = "The job name cannot be longer than 100 characters.")]
         public string JobName { get; set; }
@@ -14,15 +17,18 @@ namespace TimeBank.API.Dtos
         public string Description { get; set; }
 
         [Required]
-        public DateTime ExpiresOn { get; set; }
+        public string JobScheduleType { get; set; }
 
         [Required]
+        public DateTime ExpiresOn { get; set; }
+
         public string JobStatus { get; set; }
 
         [Required]
         public int JobCategoryId { get; set; }
 
-        [Required]
         public string CreatedById { get; set; }
+
+        public ICollection<JobScheduleDto> JobSchedules { get; set; } = new List<JobScheduleDto>();
     }
 }

@@ -1,12 +1,14 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using TimeBank.API.Dtos;
+using TimeBank.Repository.IdentityModels;
 using TimeBank.Repository.Models;
 using TimeBank.Services;
 using TimeBank.Services.Contracts;
@@ -19,11 +21,13 @@ namespace TimeBank.API.Controllers
     {
         private readonly IJobService _jobService;
         private readonly IMapper _mapper;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public JobsController(IJobService jobService, IMapper mapper)
+        public JobsController(IJobService jobService, IMapper mapper, UserManager<ApplicationUser> userManager)
         {
             _jobService = jobService;
             _mapper = mapper;
+            _userManager = userManager;
         }
 
         // GET: api/<JobsController>/?userId=GUID
@@ -35,7 +39,6 @@ namespace TimeBank.API.Controllers
             string userRole = User.FindFirstValue(ClaimTypes.Role);
 
             bool isAuthenticatedAndApproved = !string.IsNullOrWhiteSpace(userRole) && userRole != "Pending";
-            //bool isAuthenticatedAndApproved = await CheckIfAuthenticatedAndApproved(User.FindFirstValue(ClaimTypes.Email));
 
             var jobs = await _jobService.GetAllJobsAsync(userId, isAuthenticatedAndApproved);
 
@@ -56,8 +59,6 @@ namespace TimeBank.API.Controllers
 
             bool isAuthenticatedAndApproved = !string.IsNullOrWhiteSpace(userRole) && userRole != "Pending";
 
-            //bool isAuthenticatedAndApproved = await CheckIfAuthenticatedAndApproved(User.FindFirstValue(ClaimTypes.Email));
-
             var job = await _jobService.GetJobByDisplayIdAsync(displayId, isAuthenticatedAndApproved);
 
             if (job is null) return NotFound();
@@ -75,6 +76,12 @@ namespace TimeBank.API.Controllers
         public async Task<IActionResult> CreateNewJob([FromBody] JobDto jobDto)
         {
             var jobToCreate = _mapper.Map<Job>(jobDto);
+
+            var creator = await _userManager.FindByEmailAsync(User.FindFirstValue(ClaimTypes.Email));
+
+            if (creator is null) return BadRequest("User could not be found.");
+
+            jobToCreate.CreatedById = creator.Id;
 
             ApplicationResult result = await _jobService.AddJobAsync(jobToCreate);
 
