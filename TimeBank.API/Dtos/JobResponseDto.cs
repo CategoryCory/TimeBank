@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using TimeBank.Repository.Models;
 
 namespace TimeBank.API.Dtos
 {
@@ -14,5 +16,7 @@ namespace TimeBank.API.Dtos
         public string JobCategory { get; set; }
         public string CreatedById { get; set; }
         public string CreatedBy { get; set; }
+        public string JobScheduleType { get; set; }
+        public ICollection<JobScheduleDto> JobSchedules { get; set; } = new List<JobScheduleDto>();
     }
 }

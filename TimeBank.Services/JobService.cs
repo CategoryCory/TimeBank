@@ -32,6 +32,7 @@ namespace TimeBank.Services
                 jobs = jobs.Include(j => j.CreatedBy);
 
             return await jobs.Include(j => j.JobCategory)
+                             .Include(j => j.JobSchedules)
                              .OrderByDescending(j => j.CreatedOn)
                              .ToListAsync();
         }
@@ -44,6 +45,7 @@ namespace TimeBank.Services
                 jobs = jobs.Include(j => j.CreatedBy);
 
             return await jobs.Include(j => j.JobCategory)
+                             .Include(j => j.JobSchedules)
                              .SingleOrDefaultAsync(j => j.DisplayId == displayId);
         }
 
