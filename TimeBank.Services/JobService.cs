@@ -72,29 +72,61 @@ namespace TimeBank.Services
             return ApplicationResult.Success();
         }
 
-        public async Task<ApplicationResult> UpdateJobAsync(Job job)
+        public async Task<ApplicationResult> UpdateJobAsync(Job jobToUpdate)
         {
-            int jobId = await _context.Jobs
-                .Where(j => j.DisplayId == job.DisplayId)
-                .Select(j => j.JobId)
-                .FirstOrDefaultAsync();
+            // Load the current job from the database
+            var jobFromDb = await _context.Jobs
+                .Where(j => j.DisplayId == jobToUpdate.DisplayId)
+                .Include(j => j.JobSchedules)
+                .SingleOrDefaultAsync();
 
-            if (jobId == 0)
+            // If not found, bail
+            if (jobFromDb is null || jobFromDb.JobId == 0)
             {
-                return ApplicationResult.Failure(new List<string> { $"The job with name {job.JobName} could not be found." });
+                return ApplicationResult.Failure(new List<string> { $"The job with name {jobToUpdate.JobName} could not be found." });
             }
 
-            job.JobId = jobId;
-            ValidationResult result = _jobValidator.Validate(job);
+            // Job is found -- copy updated values
+            jobFromDb.JobName = jobToUpdate.JobName;
+            jobFromDb.Description = jobToUpdate.Description;
+            jobFromDb.ExpiresOn = jobToUpdate.ExpiresOn;
+            jobFromDb.JobCategoryId = jobToUpdate.JobCategoryId;
+            jobFromDb.JobScheduleType = jobToUpdate.JobScheduleType;
+
+            // If incoming job has a custom schedule type, add and remove schedule entries as needed
+            if (jobToUpdate.JobScheduleType == JobScheduleType.Custom)
+            {
+                // Check job schedules against incoming schedules and remove as necessary
+                foreach (var schedule in jobFromDb.JobSchedules)
+                {
+                    if (!jobToUpdate.JobSchedules.Contains(schedule)) jobFromDb.JobSchedules.Remove(schedule);
+                }
+
+                // Check incoming schedule entries and add as needed
+                foreach (var schedule in jobToUpdate.JobSchedules)
+                {
+                    if (!jobFromDb.JobSchedules.Contains(schedule)) jobFromDb.JobSchedules.Add(schedule);
+                }
+            }
+
+            // If incoming job has an open schedule type, remove job schedules
+            if (jobToUpdate.JobScheduleType == JobScheduleType.Open)
+            {
+                jobFromDb.JobSchedules.Clear();
+            }
+
+            // Validate and bail if errors
+            ValidationResult result = _jobValidator.Validate(jobFromDb);
 
             if (!result.IsValid)
             {
-                _logger.LogError("Failed to update job with name {JobName}", job.JobName);
+                _logger.LogError("Failed to update job with name {JobName}", jobFromDb.JobName);
 
                 return ApplicationResult.Failure(result.Errors.Select(err => err.ErrorMessage).ToList());
             }
 
-            _context.Jobs.Update(job);
+            // No errors -- save changes and return success
+            _context.Jobs.Update(jobFromDb);
             await _context.SaveChangesAsync();
 
             return ApplicationResult.Success();
