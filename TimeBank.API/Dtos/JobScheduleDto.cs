@@ -4,6 +4,8 @@ namespace TimeBank.API.Dtos
 {
     public class JobScheduleDto
     {
+        public int JobScheduleId { get; set; }
+
         [Required(ErrorMessage = "The day of week is required.")]
         public int DayOfWeek { get; set; }
 
