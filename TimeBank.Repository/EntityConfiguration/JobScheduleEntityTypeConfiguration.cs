@@ -17,6 +17,10 @@ namespace TimeBank.Repository.EntityConfiguration
 
             builder.HasOne(s => s.Job)
                 .WithMany(j => j.JobSchedules);
+
+            //builder.HasOne(s => s.JobApplication)
+            //    .WithMany(a => a.JobSchedules)
+            //    .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

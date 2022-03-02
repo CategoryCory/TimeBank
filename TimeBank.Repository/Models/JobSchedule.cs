@@ -1,4 +1,6 @@
-﻿namespace TimeBank.Repository.Models
+﻿using System.Collections.Generic;
+
+namespace TimeBank.Repository.Models
 {
     public class JobSchedule
     {
@@ -9,5 +11,7 @@
 
         public int JobId { get; set; }
         public Job Job { get; set; }
+
+        public ICollection<JobApplicationSchedule> JobApplicationSchedules { get; set; }
     }
 }
