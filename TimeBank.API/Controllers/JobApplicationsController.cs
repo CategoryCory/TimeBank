@@ -63,7 +63,7 @@ namespace TimeBank.API.Controllers
         {
             JobApplication jobApplication = new() 
             { 
-                JobDisplayId = jobApplicationDto.JobDisplayId,
+                JobId = jobApplicationDto.JobId,
                 ApplicantId = jobApplicationDto.ApplicantId
             };
 

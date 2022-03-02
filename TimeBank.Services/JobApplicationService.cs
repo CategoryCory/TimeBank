@@ -41,7 +41,7 @@ namespace TimeBank.Services
 
             if (!result.IsValid)
             {
-                _logger.LogError("Failed to create a job response for job {}.", jobApplication.JobDisplayId);
+                _logger.LogError("Failed to create a job response for job {}.", jobApplication.JobId);
 
                 return ApplicationResult.Failure(result.Errors.Select(x => x.ErrorMessage).ToList());
             }

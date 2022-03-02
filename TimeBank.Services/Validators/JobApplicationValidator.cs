@@ -7,7 +7,7 @@ namespace TimeBank.Services.Validators
     {
         public JobApplicationValidator()
         {
-            RuleFor(r => r.JobDisplayId).NotEmpty().WithMessage("You must provide a job for this response.");
+            RuleFor(r => r.JobId).NotEmpty().WithMessage("You must provide a job for this response.");
             RuleFor(r => r.ApplicantId).NotEmpty().WithMessage("You must provide a user for this response.");
         }
     }

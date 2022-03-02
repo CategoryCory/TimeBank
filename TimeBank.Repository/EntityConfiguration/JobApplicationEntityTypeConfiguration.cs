@@ -17,9 +17,7 @@ namespace TimeBank.Repository.EntityConfiguration
                 .HasDefaultValueSql("getdate()");
 
             builder.HasOne(r => r.Job)
-                .WithMany(j => j.JobApplications)
-                .HasForeignKey(r => r.JobDisplayId)
-                .HasPrincipalKey(j => j.DisplayId);
+                .WithMany(j => j.JobApplications);
 
             builder.HasOne(r => r.Applicant)
                 .WithMany(u => u.JobApplications);

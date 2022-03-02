@@ -18,7 +18,7 @@ namespace TimeBank.Repository.Models
         public DateTime CreatedOn { get; set; }
         public DateTime ResolvedOn { get; set; }
 
-        public Guid JobDisplayId { get; set; }
+        public int JobId { get; set; }
         public Job Job { get; set; }
 
         public string ApplicantId { get; set; }
