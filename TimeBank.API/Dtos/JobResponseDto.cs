@@ -6,6 +6,7 @@ namespace TimeBank.API.Dtos
 {
     public class JobResponseDto
     {
+        public int JobId { get; set; }
         public Guid DisplayId { get; set; }
         public string JobName { get; set; }
         public string Description { get; set; }

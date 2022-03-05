@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace TimeBank.API.Dtos
@@ -8,7 +9,8 @@ namespace TimeBank.API.Dtos
         [Required(ErrorMessage = "The job id is missing.")]
         public int JobId { get; set; }
 
-        [Required(ErrorMessage = "The applicant id is missing.")]
         public string ApplicantId { get; set; }
+
+        public ICollection<int> JobSchedules { get; set; } = new List<int>();
     }
 }
