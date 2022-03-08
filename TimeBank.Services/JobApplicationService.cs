@@ -21,6 +21,18 @@ namespace TimeBank.Services
             _validator = new JobApplicationValidator();
         }
 
+        public async Task<List<JobApplication>> GetJobApplicationsByUserAsync(string userId)
+        {
+            return await _context.JobApplications.AsNoTracking()
+                                                 .Where(j => j.ApplicantId == userId)
+                                                 .Include(j => j.Job)
+                                                 .ThenInclude(j => j.CreatedBy)
+                                                 .Include(j => j.Job)
+                                                 .ThenInclude(j => j.JobCategory)
+                                                 .Include(j => j.Applicant)
+                                                 .ToListAsync();
+        }
+
         public async Task<JobApplication> GetApplicationByJobAndUserAsync(string userId, int jobId)
         {
             return await _context.JobApplications.AsNoTracking().SingleOrDefaultAsync(j => j.ApplicantId == userId && j.JobId == jobId);

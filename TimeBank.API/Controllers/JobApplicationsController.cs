@@ -35,8 +35,6 @@ namespace TimeBank.API.Controllers
 
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> CheckApplicationByJobId([FromQuery] int jobId)
         {
             var applicant = await _userManager.FindByEmailAsync(User.FindFirstValue(ClaimTypes.Email));
@@ -48,6 +46,20 @@ namespace TimeBank.API.Controllers
                 ApplicationExists = jobApplicationDate.HasValue,
                 ApplicationDate = jobApplicationDate ?? DateTime.MinValue,
             });
+        }
+
+        [HttpGet("{applicantId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetApplicationsByUser(string applicantId)
+        {
+            var jobApplications = await _jobApplicationService.GetJobApplicationsByUserAsync(applicantId);
+
+            if (jobApplications.Count == 0) return NotFound();
+
+            var jobApplicationDtos = _mapper.Map<List<JobApplicationResponseDto>>(jobApplications);
+
+            return Ok(jobApplicationDtos);
         }
 
         [HttpPost]

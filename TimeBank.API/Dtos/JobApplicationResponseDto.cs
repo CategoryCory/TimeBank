@@ -11,6 +11,7 @@ namespace TimeBank.API.Dtos
         public int JobId { get; set; }
         public string JobName { get; set; }
         public string JobCreatedByName { get; set; }
+        public string JobCategory { get; set; }
         public string ApplicantId { get; set; }
         public string ApplicantName { get; set; }
     }

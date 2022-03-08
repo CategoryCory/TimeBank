@@ -4,6 +4,7 @@ namespace TimeBank.Services.Contracts
 {
     public interface IJobApplicationService
     {
+        Task<List<JobApplication>> GetJobApplicationsByUserAsync(string userId);
         Task<ApplicationResult> AddJobApplicationAsync(JobApplication jobResponse, ICollection<int> jobAppScheduleIds);
         Task<ApplicationResult> EditJobApplicationStatusByIdAsync(int id, string newStatus);
         Task<JobApplication> GetApplicationByJobAndUserAsync(string userId, int jobId);
