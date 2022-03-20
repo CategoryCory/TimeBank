@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System.Collections.Generic;
 using TimeBank.Repository.Models;
 
 namespace TimeBank.Repository.EntityConfiguration
@@ -21,6 +22,20 @@ namespace TimeBank.Repository.EntityConfiguration
 
             builder.HasOne(r => r.Applicant)
                 .WithMany(u => u.JobApplications);
+
+            builder.HasMany(r => r.JobSchedules)
+                .WithMany(s => s.JobApplications)
+                .UsingEntity<Dictionary<string, object>>(
+                    "ApplicationSchedule",
+                    r => r
+                         .HasOne<JobSchedule>()
+                         .WithMany()
+                         .OnDelete(DeleteBehavior.NoAction),
+                    s => s
+                         .HasOne<JobApplication>()
+                         .WithMany()
+                         .OnDelete(DeleteBehavior.NoAction)
+                );
         }
     }
 }
