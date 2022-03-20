@@ -42,7 +42,15 @@ namespace TimeBank.Services
             var jobs = _context.Jobs.AsNoTracking();
 
             if (includeUserData)
+            {
                 jobs = jobs.Include(j => j.CreatedBy);
+                           //.Include(j => j.JobApplications)
+                           //.ThenInclude(a => a.Applicant)
+                           //.ThenInclude(u => u.Skills)
+                           //.Include(j => j.JobApplications)
+                           //.ThenInclude(a => a.JobApplicationSchedules)
+                           //.ThenInclude(s => s.JobSchedule);
+            }
 
             return await jobs.Include(j => j.JobCategory)
                              .Include(j => j.JobSchedules)

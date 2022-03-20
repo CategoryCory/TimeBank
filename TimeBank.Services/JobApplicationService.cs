@@ -21,22 +21,32 @@ namespace TimeBank.Services
             _validator = new JobApplicationValidator();
         }
 
-        public async Task<List<JobApplication>> GetJobApplicationsByUserAsync(string userId)
+        public async Task<List<JobApplication>> GetJobApplicationsAsync(string userId)
         {
-            return await _context.JobApplications.AsNoTracking()
-                                                 .Where(j => j.ApplicantId == userId)
-                                                 .Include(j => j.Job)
-                                                 .ThenInclude(j => j.CreatedBy)
-                                                 .Include(j => j.Job)
-                                                 .ThenInclude(j => j.JobCategory)
-                                                 .Include(j => j.Applicant)
-                                                 .ToListAsync();
+            var apps = _context.JobApplications.AsNoTracking();
+
+            if (!string.IsNullOrWhiteSpace(userId))
+            {
+                apps = apps.Where(j => j.ApplicantId == userId);
+            }
+
+            return await apps.Include(j => j.Job)
+                             .ThenInclude(j => j.CreatedBy)
+                             .Include(j => j.Job)
+                             .ThenInclude(j => j.JobCategory)
+                             .Include(j => j.Applicant)
+                             .ToListAsync();
         }
 
-        public async Task<JobApplication> GetApplicationByJobAndUserAsync(string userId, int jobId)
+        public async Task<List<JobApplication>> GetJobApplicationsByJobAsync(int jobId)
         {
-            return await _context.JobApplications.AsNoTracking().SingleOrDefaultAsync(j => j.ApplicantId == userId && j.JobId == jobId);
+            return await _context.JobApplications.AsNoTracking().Where(j => j.JobId == jobId).ToListAsync();
         }
+
+        //public async Task<JobApplication> GetApplicationByJobAndUserAsync(string userId, int jobId)
+        //{
+        //    return await _context.JobApplications.AsNoTracking().SingleOrDefaultAsync(j => j.ApplicantId == userId && j.JobId == jobId);
+        //}
 
         public async Task<DateTime?> CheckApplicationDateByJobAndUserAsync(string userId, int jobId)
         {
@@ -70,15 +80,15 @@ namespace TimeBank.Services
 
                 if (jobAppScheduleIds != null && jobAppScheduleIds.Count > 0)
                 {
-                    var jobAppSchedules = new List<JobApplicationSchedule>();
+                    //var jobAppSchedules = new List<JobApplicationSchedule>();
 
                     foreach (int scheduleId in jobAppScheduleIds)
                     {
-                        jobAppSchedules.Add(new JobApplicationSchedule
-                        {
-                            JobScheduleId = scheduleId,
-                            JobApplicationId = jobApplication.JobApplicationId,
-                        });
+                        //jobAppSchedules.Add(new JobApplicationSchedule
+                        //{
+                        //    JobScheduleId = scheduleId,
+                        //    JobApplicationId = jobApplication.JobApplicationId,
+                        //});
 
                         //jobApplication.JobApplicationSchedules.Add(new JobApplicationSchedule
                         //{
@@ -87,7 +97,7 @@ namespace TimeBank.Services
                         //});
                     }
 
-                    _context.JobApplicationSchedules.AddRange(jobAppSchedules);
+                    //_context.JobApplicationSchedules.AddRange(jobAppSchedules);
                     await _context.SaveChangesAsync();
                 }
 

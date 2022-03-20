@@ -30,17 +30,46 @@ namespace TimeBank.API.Controllers
             _userManager = userManager;
         }
 
-        // GET: api/<JobsController>/?userId=GUID
+        // GET: api/<JobsController>
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> GetAllJobs([FromQuery] string userId)
+        public async Task<IActionResult> GetAllJobs()
         {
             string userRole = User.FindFirstValue(ClaimTypes.Role);
 
             bool isAuthenticatedAndApproved = !string.IsNullOrWhiteSpace(userRole) && userRole != "Pending";
 
-            var jobs = await _jobService.GetAllJobsAsync(userId, isAuthenticatedAndApproved);
+            var jobs = await _jobService.GetAllJobsAsync(includeUserData: isAuthenticatedAndApproved);
+
+            if (jobs.Count == 0) return NoContent();
+
+            var jobResponseDtos = _mapper.Map<List<JobResponseDto>>(jobs);
+
+            return Ok(jobResponseDtos);
+        }
+
+        // GET api/<JobsController>/currentuser
+        [HttpGet("currentuser")]
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> GetCurrentUserJobs()
+        {
+            var currentUserEmail = User.FindFirstValue(ClaimTypes.Email);
+
+            if (string.IsNullOrWhiteSpace(currentUserEmail)) return BadRequest();
+
+            var currentUser = await _userManager.FindByEmailAsync(currentUserEmail);
+            var currentUserRole = User.FindFirstValue(ClaimTypes.Role);
+
+            bool isAuthenticatedAndApproved = (currentUser is not null) && currentUserRole != "Pending";
+
+            if (!isAuthenticatedAndApproved) return Unauthorized();
+
+            var jobs = await _jobService.GetAllJobsAsync(currentUser.Id, isAuthenticatedAndApproved);
 
             if (jobs.Count == 0) return NoContent();
 

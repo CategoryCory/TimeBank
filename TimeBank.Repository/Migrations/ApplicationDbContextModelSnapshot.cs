@@ -62,6 +62,29 @@ namespace TimeBank.Repository.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "5a0ffb4a-48a6-4c66-8e80-f756375b5318",
+                            ConcurrencyStamp = "47eb37bd-7175-47d8-aadc-ae4eabc53968",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = "4a683d0d-50cc-4115-a041-417015b461b0",
+                            ConcurrencyStamp = "0c29b947-5389-4abf-a34d-a192e076be0e",
+                            Name = "User",
+                            NormalizedName = "USER"
+                        },
+                        new
+                        {
+                            Id = "08d546ff-9f89-4af2-8603-aa4a86b65a1d",
+                            ConcurrencyStamp = "05e1ea35-efd5-42c2-b746-65a0399117bf",
+                            Name = "Pending",
+                            NormalizedName = "PENDING"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -393,24 +416,6 @@ namespace TimeBank.Repository.Migrations
                     b.ToTable("JobApplications");
                 });
 
-            modelBuilder.Entity("TimeBank.Repository.Models.JobApplicationSchedule", b =>
-                {
-                    b.Property<int>("JobScheduleId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("JobApplicationId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("JobApplicationScheduleId")
-                        .HasColumnType("int");
-
-                    b.HasKey("JobScheduleId", "JobApplicationId");
-
-                    b.HasIndex("JobApplicationId");
-
-                    b.ToTable("JobApplicationSchedules");
-                });
-
             modelBuilder.Entity("TimeBank.Repository.Models.JobCategory", b =>
                 {
                     b.Property<int>("JobCategoryId")
@@ -459,6 +464,64 @@ namespace TimeBank.Repository.Migrations
                     b.HasIndex("JobId");
 
                     b.ToTable("JobSchedules");
+                });
+
+            modelBuilder.Entity("TimeBank.Repository.Models.Message", b =>
+                {
+                    b.Property<int>("MessageId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MessageId"), 1L, 1);
+
+                    b.Property<string>("Body")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsFromSender")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("MessageThreadId")
+                        .HasColumnType("int");
+
+                    b.HasKey("MessageId");
+
+                    b.HasIndex("MessageThreadId");
+
+                    b.ToTable("Messages");
+                });
+
+            modelBuilder.Entity("TimeBank.Repository.Models.MessageThread", b =>
+                {
+                    b.Property<int>("MessageThreadId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MessageThreadId"), 1L, 1);
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FromUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("JobId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ToUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("MessageThreadId");
+
+                    b.HasIndex("FromUserId");
+
+                    b.HasIndex("JobId");
+
+                    b.HasIndex("ToUserId");
+
+                    b.ToTable("MessageThreads");
                 });
 
             modelBuilder.Entity("TimeBank.Repository.Models.TokenBalance", b =>
@@ -680,25 +743,6 @@ namespace TimeBank.Repository.Migrations
                     b.Navigation("Job");
                 });
 
-            modelBuilder.Entity("TimeBank.Repository.Models.JobApplicationSchedule", b =>
-                {
-                    b.HasOne("TimeBank.Repository.Models.JobApplication", "JobApplication")
-                        .WithMany("JobApplicationSchedules")
-                        .HasForeignKey("JobApplicationId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("TimeBank.Repository.Models.JobSchedule", "JobSchedule")
-                        .WithMany("JobApplicationSchedules")
-                        .HasForeignKey("JobScheduleId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("JobApplication");
-
-                    b.Navigation("JobSchedule");
-                });
-
             modelBuilder.Entity("TimeBank.Repository.Models.JobSchedule", b =>
                 {
                     b.HasOne("TimeBank.Repository.Models.Job", "Job")
@@ -708,6 +752,40 @@ namespace TimeBank.Repository.Migrations
                         .IsRequired();
 
                     b.Navigation("Job");
+                });
+
+            modelBuilder.Entity("TimeBank.Repository.Models.Message", b =>
+                {
+                    b.HasOne("TimeBank.Repository.Models.MessageThread", "MessageThread")
+                        .WithMany("Messages")
+                        .HasForeignKey("MessageThreadId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MessageThread");
+                });
+
+            modelBuilder.Entity("TimeBank.Repository.Models.MessageThread", b =>
+                {
+                    b.HasOne("TimeBank.Repository.IdentityModels.ApplicationUser", "FromUser")
+                        .WithMany()
+                        .HasForeignKey("FromUserId");
+
+                    b.HasOne("TimeBank.Repository.Models.Job", "Job")
+                        .WithMany()
+                        .HasForeignKey("JobId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TimeBank.Repository.IdentityModels.ApplicationUser", "ToUser")
+                        .WithMany()
+                        .HasForeignKey("ToUserId");
+
+                    b.Navigation("FromUser");
+
+                    b.Navigation("Job");
+
+                    b.Navigation("ToUser");
                 });
 
             modelBuilder.Entity("TimeBank.Repository.Models.TokenBalance", b =>
@@ -773,19 +851,14 @@ namespace TimeBank.Repository.Migrations
                     b.Navigation("JobSchedules");
                 });
 
-            modelBuilder.Entity("TimeBank.Repository.Models.JobApplication", b =>
-                {
-                    b.Navigation("JobApplicationSchedules");
-                });
-
             modelBuilder.Entity("TimeBank.Repository.Models.JobCategory", b =>
                 {
                     b.Navigation("Jobs");
                 });
 
-            modelBuilder.Entity("TimeBank.Repository.Models.JobSchedule", b =>
+            modelBuilder.Entity("TimeBank.Repository.Models.MessageThread", b =>
                 {
-                    b.Navigation("JobApplicationSchedules");
+                    b.Navigation("Messages");
                 });
 #pragma warning restore 612, 618
         }
