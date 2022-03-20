@@ -15,6 +15,8 @@ namespace TimeBank.API.Dtos
         [Required(ErrorMessage = "The ending time is required.")]
         public int TimeEnd { get; set; }
 
+        public string JobScheduleStatus { get; set; }
+
         public int JobId { get; set; }
     }
 }

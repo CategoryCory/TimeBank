@@ -14,6 +14,10 @@ namespace TimeBank.Repository.EntityConfiguration
                 .IsRequired();
             builder.Property(s => s.TimeEnd)
                 .IsRequired();
+            builder.Property(s => s.JobScheduleStatus)
+                .HasConversion<string>()
+                .HasMaxLength(25)
+                .HasDefaultValue(JobScheduleStatus.Open);
 
             builder.HasOne(s => s.Job)
                 .WithMany(j => j.JobSchedules);
