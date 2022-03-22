@@ -23,19 +23,24 @@ namespace TimeBank.Repository.EntityConfiguration
             builder.HasOne(r => r.Applicant)
                 .WithMany(u => u.JobApplications);
 
-            builder.HasMany(r => r.JobSchedules)
+            builder.HasOne(r => r.JobApplicationSchedule)
                 .WithMany(s => s.JobApplications)
-                .UsingEntity<Dictionary<string, object>>(
-                    "ApplicationSchedule",
-                    r => r
-                         .HasOne<JobSchedule>()
-                         .WithMany()
-                         .OnDelete(DeleteBehavior.NoAction),
-                    s => s
-                         .HasOne<JobApplication>()
-                         .WithMany()
-                         .OnDelete(DeleteBehavior.NoAction)
-                );
+                .HasForeignKey(r => r.JobApplicationScheduleId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            //builder.HasMany(r => r.JobApplicationSchedules)
+            //    .WithMany(s => s.JobApplications)
+            //    .UsingEntity<Dictionary<string, object>>(
+            //        "ApplicationSchedule",
+            //        r => r
+            //             .HasOne<JobSchedule>()
+            //             .WithMany()
+            //             .OnDelete(DeleteBehavior.NoAction),
+            //        s => s
+            //             .HasOne<JobApplication>()
+            //             .WithMany()
+            //             .OnDelete(DeleteBehavior.NoAction)
+            //    );
         }
     }
 }

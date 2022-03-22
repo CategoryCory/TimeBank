@@ -43,17 +43,17 @@ namespace TimeBank.Services
 
             if (includeUserData)
             {
-                jobs = jobs.Include(j => j.CreatedBy);
-                           //.Include(j => j.JobApplications)
-                           //.ThenInclude(a => a.Applicant)
-                           //.ThenInclude(u => u.Skills)
-                           //.Include(j => j.JobApplications)
-                           //.ThenInclude(a => a.JobApplicationSchedules)
-                           //.ThenInclude(s => s.JobSchedule);
+                jobs = jobs.Include(j => j.CreatedBy)
+                           .Include(j => j.JobApplications)
+                           .ThenInclude(a => a.Applicant)
+                           .ThenInclude(u => u.Skills)
+                           .Include(j => j.JobApplications)
+                           .ThenInclude(a => a.JobApplicationSchedule);
             }
 
             return await jobs.Include(j => j.JobCategory)
                              .Include(j => j.JobSchedules)
+                             .AsSplitQuery()
                              .SingleOrDefaultAsync(j => j.DisplayId == displayId);
         }
 

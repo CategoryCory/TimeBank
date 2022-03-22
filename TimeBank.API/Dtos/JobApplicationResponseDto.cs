@@ -16,7 +16,8 @@ namespace TimeBank.API.Dtos
         public string JobCreatedByName { get; set; }
         public string JobCategory { get; set; }
         public UserProfileResponseDto Applicant { get; set; }
-        //public ICollection<JobScheduleDto> JobSchedules { get; set; } = new List<JobScheduleDto>();
+        public JobScheduleDto JobApplicationSchedule { get; set; }
+        //public ICollection<JobScheduleDto> JobApplicationSchedules { get; set; } = new List<JobScheduleDto>();
         //public string ApplicantId { get; set; }
         //public string ApplicantName { get; set; }
     }

@@ -25,6 +25,9 @@ namespace TimeBank.Repository.Models
         public string ApplicantId { get; set; }
         public ApplicationUser Applicant { get; set; }
 
-        public ICollection<JobSchedule> JobSchedules { get; set; }
+        public int JobApplicationScheduleId { get; set; }
+        public JobSchedule JobApplicationSchedule { get; set; }
+
+        //public ICollection<JobSchedule> JobApplicationSchedules { get; set; }
     }
 }

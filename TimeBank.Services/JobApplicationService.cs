@@ -40,13 +40,14 @@ namespace TimeBank.Services
 
         public async Task<List<JobApplication>> GetJobApplicationsByJobAsync(int jobId)
         {
-            return await _context.JobApplications.AsNoTracking().Where(j => j.JobId == jobId).ToListAsync();
+            return await _context.JobApplications
+                                 .AsNoTracking()
+                                 .Include(a => a.Applicant)
+                                 .ThenInclude(a => a.Skills)
+                                 .Include(a => a.JobApplicationSchedule)
+                                 .Where(j => j.JobId == jobId)
+                                 .ToListAsync();
         }
-
-        //public async Task<JobApplication> GetApplicationByJobAndUserAsync(string userId, int jobId)
-        //{
-        //    return await _context.JobApplications.AsNoTracking().SingleOrDefaultAsync(j => j.ApplicantId == userId && j.JobId == jobId);
-        //}
 
         public async Task<DateTime?> CheckApplicationDateByJobAndUserAsync(string userId, int jobId)
         {
@@ -57,10 +58,10 @@ namespace TimeBank.Services
             return await _context.JobApplications.AsNoTracking()
                                                  .Where(j => j.ApplicantId == userId && j.JobId == jobId)
                                                  .Select(j => j.CreatedOn)
-                                                 .SingleOrDefaultAsync();
+                                                 .FirstOrDefaultAsync();
         }
 
-        public async Task<ApplicationResult> AddJobApplicationAsync(JobApplication jobApplication, ICollection<int> jobAppScheduleIds)
+        public async Task<ApplicationResult> AddJobApplicationAsync(JobApplication jobApplication)
         {
             ValidationResult result = _validator.Validate(jobApplication);
 
@@ -71,44 +72,38 @@ namespace TimeBank.Services
                 return ApplicationResult.Failure(result.Errors.Select(x => x.ErrorMessage).ToList());
             }
 
-            using var dbTransaction = _context.Database.BeginTransaction();
+            _context.JobApplications.Add(jobApplication);
+            await _context.SaveChangesAsync();
 
-            try
-            {
-                _context.JobApplications.Add(jobApplication);
-                await _context.SaveChangesAsync();
+            return ApplicationResult.Success();
 
-                if (jobAppScheduleIds != null && jobAppScheduleIds.Count > 0)
-                {
-                    //var jobAppSchedules = new List<JobApplicationSchedule>();
+            //using var dbTransaction = _context.Database.BeginTransaction();
 
-                    foreach (int scheduleId in jobAppScheduleIds)
-                    {
-                        //jobAppSchedules.Add(new JobApplicationSchedule
-                        //{
-                        //    JobScheduleId = scheduleId,
-                        //    JobApplicationId = jobApplication.JobApplicationId,
-                        //});
+            //try
+            //{
+            //    jobApplication.JobApplicationSchedules = new List<JobSchedule>();
+            //    _context.JobApplications.Add(jobApplication);
+            //    await _context.SaveChangesAsync();
 
-                        //jobApplication.JobApplicationSchedules.Add(new JobApplicationSchedule
-                        //{
-                        //    JobScheduleId = scheduleId,
-                        //    JobApplicationId = jobApplication.JobApplicationId,
-                        //});
-                    }
+            //    if (jobAppScheduleIds != null && jobAppScheduleIds.Count > 0)
+            //    {
+            //        foreach (int scheduleId in jobAppScheduleIds)
+            //        {
+            //            var s = await _context.JobSchedules.FindAsync(scheduleId);
+            //            jobApplication.JobApplicationSchedules.Add(s);
+            //        }
 
-                    //_context.JobApplicationSchedules.AddRange(jobAppSchedules);
-                    await _context.SaveChangesAsync();
-                }
+            //        await _context.SaveChangesAsync();
+            //    }
 
-                await dbTransaction.CommitAsync();
-                return ApplicationResult.Success();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("Adding the job application failed: {}", ex.InnerException);
-                return ApplicationResult.Failure(new List<string> { $"Adding the job application failed: {ex.InnerException.Message}" });
-            }
+            //    await dbTransaction.CommitAsync();
+            //    return ApplicationResult.Success();
+            //}
+            //catch (Exception ex)
+            //{
+            //    _logger.LogError("Adding the job application failed: {}", ex.InnerException);
+            //    return ApplicationResult.Failure(new List<string> { $"Adding the job application failed: {ex.InnerException.Message}" });
+            //}
         }
 
         public async Task<ApplicationResult> EditJobApplicationStatusByIdAsync(int id, string newStatus)

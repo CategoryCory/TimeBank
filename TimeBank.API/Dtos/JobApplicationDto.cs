@@ -11,6 +11,6 @@ namespace TimeBank.API.Dtos
 
         public string ApplicantId { get; set; }
 
-        public ICollection<int> JobSchedules { get; set; } = new List<int>();
+        public int JobApplicationScheduleId { get; set; }
     }
 }

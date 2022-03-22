@@ -12,8 +12,8 @@ using TimeBank.Repository;
 namespace TimeBank.Repository.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220320030505_AddApplicationSchedule")]
-    partial class AddApplicationSchedule
+    [Migration("20220321125258_InitialMigration")]
+    partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,21 +23,6 @@ namespace TimeBank.Repository.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
-
-            modelBuilder.Entity("ApplicationSchedule", b =>
-                {
-                    b.Property<int>("JobApplicationsJobApplicationId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("JobSchedulesJobScheduleId")
-                        .HasColumnType("int");
-
-                    b.HasKey("JobApplicationsJobApplicationId", "JobSchedulesJobScheduleId");
-
-                    b.HasIndex("JobSchedulesJobScheduleId");
-
-                    b.ToTable("ApplicationSchedule");
-                });
 
             modelBuilder.Entity("ApplicationUserUserSkill", b =>
                 {
@@ -79,6 +64,29 @@ namespace TimeBank.Repository.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "5c2c033c-0d08-41cb-b0de-47dba97c6051",
+                            ConcurrencyStamp = "e74c9813-cbf9-48d0-8bf3-4ad1ad2abdbd",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = "eb4ebf9b-3e22-43f2-9e02-8497be770bf6",
+                            ConcurrencyStamp = "a2d61f8f-d141-4920-8ca6-b7a69eaa78a3",
+                            Name = "User",
+                            NormalizedName = "USER"
+                        },
+                        new
+                        {
+                            Id = "968e1888-4457-469b-bb44-138a52dc3994",
+                            ConcurrencyStamp = "75b8c3ae-06dc-49e4-a0ca-7aa2e578b861",
+                            Name = "Pending",
+                            NormalizedName = "PENDING"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -388,6 +396,9 @@ namespace TimeBank.Repository.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("getdate()");
 
+                    b.Property<int>("JobApplicationScheduleId")
+                        .HasColumnType("int");
+
                     b.Property<int>("JobId")
                         .HasColumnType("int");
 
@@ -404,6 +415,8 @@ namespace TimeBank.Repository.Migrations
                     b.HasKey("JobApplicationId");
 
                     b.HasIndex("ApplicantId");
+
+                    b.HasIndex("JobApplicationScheduleId");
 
                     b.HasIndex("JobId");
 
@@ -644,21 +657,6 @@ namespace TimeBank.Repository.Migrations
                     b.ToTable("UserSkills");
                 });
 
-            modelBuilder.Entity("ApplicationSchedule", b =>
-                {
-                    b.HasOne("TimeBank.Repository.Models.JobApplication", null)
-                        .WithMany()
-                        .HasForeignKey("JobApplicationsJobApplicationId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("TimeBank.Repository.Models.JobSchedule", null)
-                        .WithMany()
-                        .HasForeignKey("JobSchedulesJobScheduleId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("ApplicationUserUserSkill", b =>
                 {
                     b.HasOne("TimeBank.Repository.Models.UserSkill", null)
@@ -748,6 +746,12 @@ namespace TimeBank.Repository.Migrations
                         .WithMany("JobApplications")
                         .HasForeignKey("ApplicantId");
 
+                    b.HasOne("TimeBank.Repository.Models.JobSchedule", "JobApplicationSchedule")
+                        .WithMany("JobApplications")
+                        .HasForeignKey("JobApplicationScheduleId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.HasOne("TimeBank.Repository.Models.Job", "Job")
                         .WithMany("JobApplications")
                         .HasForeignKey("JobId")
@@ -757,6 +761,8 @@ namespace TimeBank.Repository.Migrations
                     b.Navigation("Applicant");
 
                     b.Navigation("Job");
+
+                    b.Navigation("JobApplicationSchedule");
                 });
 
             modelBuilder.Entity("TimeBank.Repository.Models.JobSchedule", b =>
@@ -870,6 +876,11 @@ namespace TimeBank.Repository.Migrations
             modelBuilder.Entity("TimeBank.Repository.Models.JobCategory", b =>
                 {
                     b.Navigation("Jobs");
+                });
+
+            modelBuilder.Entity("TimeBank.Repository.Models.JobSchedule", b =>
+                {
+                    b.Navigation("JobApplications");
                 });
 
             modelBuilder.Entity("TimeBank.Repository.Models.MessageThread", b =>

@@ -59,20 +59,6 @@ namespace TimeBank.API.Controllers
             return Ok(jobApplicationDtos);
         }
 
-        //[HttpGet("{applicantId}")]
-        //[ProducesResponseType(StatusCodes.Status200OK)]
-        //[ProducesResponseType(StatusCodes.Status404NotFound)]
-        //public async Task<IActionResult> GetApplicationsByUser(string applicantId)
-        //{
-        //    var jobApplications = await _jobApplicationService.GetJobApplicationsByUserAsync(applicantId);
-
-        //    if (jobApplications.Count == 0) return NotFound();
-
-        //    var jobApplicationDtos = _mapper.Map<List<JobApplicationResponseDto>>(jobApplications);
-
-        //    return Ok(jobApplicationDtos);
-        //}
-
         [HttpGet("verify")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> CheckApplicationByJobId([FromQuery] int jobId)
@@ -99,9 +85,10 @@ namespace TimeBank.API.Controllers
             {
                 JobId = jobApplicationDto.JobId,
                 ApplicantId = applicant.Id,
+                JobApplicationScheduleId = jobApplicationDto.JobApplicationScheduleId,
             };
 
-            ApplicationResult result = await _jobApplicationService.AddJobApplicationAsync(jobApplication, jobApplicationDto.JobSchedules);
+            ApplicationResult result = await _jobApplicationService.AddJobApplicationAsync(jobApplication);
 
             if (!result.IsSuccess) return BadRequest(result.Errors);
 

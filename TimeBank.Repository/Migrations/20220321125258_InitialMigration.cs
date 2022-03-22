@@ -324,34 +324,6 @@ namespace TimeBank.Repository.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "JobApplications",
-                columns: table => new
-                {
-                    JobApplicationId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Status = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false, defaultValue: "Pending"),
-                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
-                    ResolvedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    JobId = table.Column<int>(type: "int", nullable: false),
-                    ApplicantId = table.Column<string>(type: "nvarchar(450)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_JobApplications", x => x.JobApplicationId);
-                    table.ForeignKey(
-                        name: "FK_JobApplications_AspNetUsers_ApplicantId",
-                        column: x => x.ApplicantId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_JobApplications_Jobs_JobId",
-                        column: x => x.JobId,
-                        principalTable: "Jobs",
-                        principalColumn: "JobId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "JobSchedules",
                 columns: table => new
                 {
@@ -360,6 +332,7 @@ namespace TimeBank.Repository.Migrations
                     DayOfWeek = table.Column<int>(type: "int", nullable: false),
                     TimeBegin = table.Column<int>(type: "int", nullable: false),
                     TimeEnd = table.Column<int>(type: "int", nullable: false),
+                    JobScheduleStatus = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false, defaultValue: "Open"),
                     JobId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -406,6 +379,40 @@ namespace TimeBank.Repository.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "JobApplications",
+                columns: table => new
+                {
+                    JobApplicationId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Status = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false, defaultValue: "Pending"),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
+                    ResolvedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    JobId = table.Column<int>(type: "int", nullable: false),
+                    ApplicantId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    JobApplicationScheduleId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_JobApplications", x => x.JobApplicationId);
+                    table.ForeignKey(
+                        name: "FK_JobApplications_AspNetUsers_ApplicantId",
+                        column: x => x.ApplicantId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_JobApplications_Jobs_JobId",
+                        column: x => x.JobId,
+                        principalTable: "Jobs",
+                        principalColumn: "JobId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_JobApplications_JobSchedules_JobApplicationScheduleId",
+                        column: x => x.JobApplicationScheduleId,
+                        principalTable: "JobSchedules",
+                        principalColumn: "JobScheduleId");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Messages",
                 columns: table => new
                 {
@@ -430,17 +437,17 @@ namespace TimeBank.Repository.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "08d546ff-9f89-4af2-8603-aa4a86b65a1d", "05e1ea35-efd5-42c2-b746-65a0399117bf", "Pending", "PENDING" });
+                values: new object[] { "5c2c033c-0d08-41cb-b0de-47dba97c6051", "e74c9813-cbf9-48d0-8bf3-4ad1ad2abdbd", "Admin", "ADMIN" });
 
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "4a683d0d-50cc-4115-a041-417015b461b0", "0c29b947-5389-4abf-a34d-a192e076be0e", "User", "USER" });
+                values: new object[] { "968e1888-4457-469b-bb44-138a52dc3994", "75b8c3ae-06dc-49e4-a0ca-7aa2e578b861", "Pending", "PENDING" });
 
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "5a0ffb4a-48a6-4c66-8e80-f756375b5318", "47eb37bd-7175-47d8-aadc-ae4eabc53968", "Admin", "ADMIN" });
+                values: new object[] { "eb4ebf9b-3e22-43f2-9e02-8497be770bf6", "a2d61f8f-d141-4920-8ca6-b7a69eaa78a3", "User", "USER" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_ApplicationUserUserSkill_UsersId",
@@ -490,6 +497,11 @@ namespace TimeBank.Repository.Migrations
                 name: "IX_JobApplications_ApplicantId",
                 table: "JobApplications",
                 column: "ApplicantId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_JobApplications_JobApplicationScheduleId",
+                table: "JobApplications",
+                column: "JobApplicationScheduleId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_JobApplications_JobId",
@@ -589,9 +601,6 @@ namespace TimeBank.Repository.Migrations
                 name: "JobApplications");
 
             migrationBuilder.DropTable(
-                name: "JobSchedules");
-
-            migrationBuilder.DropTable(
                 name: "Messages");
 
             migrationBuilder.DropTable(
@@ -608,6 +617,9 @@ namespace TimeBank.Repository.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "JobSchedules");
 
             migrationBuilder.DropTable(
                 name: "MessageThreads");
