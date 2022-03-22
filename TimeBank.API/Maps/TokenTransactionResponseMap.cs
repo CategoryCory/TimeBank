@@ -14,11 +14,14 @@ namespace TimeBank.API.Maps
             {
                 responseTransactions.Add(new TokenTransactionResponseDto
                 {
+                    TokenTransactionId = transaction.TokenTransactionId,
+                    SenderId = transaction.SenderId,
                     SenderName = $"{transaction.Sender.FirstName} {transaction.Sender.LastName}",
+                    RecipientId = transaction.RecipientId,
                     RecipientName = $"{transaction.Recipient.FirstName} {transaction.Recipient.LastName}",
-                    TransactionAmount = transaction.Amount,
+                    Amount = transaction.Amount,
                     ProcessedOn = transaction.ProcessedOn,
-                    ActionDescription = ""
+                    //ActionDescription = ""
                 });
             }
 

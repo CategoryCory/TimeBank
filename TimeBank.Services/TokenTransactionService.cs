@@ -68,6 +68,7 @@ namespace TimeBank.Services
             try
             {
                 allTransactions = await _context.TokenTransactions
+                    .AsNoTracking()
                     .Where(t => t.SenderId == userId || t.RecipientId == userId)
                     .Include(t => t.Sender)
                     .Include(t => t.Recipient)

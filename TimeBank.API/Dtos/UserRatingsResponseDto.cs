@@ -4,6 +4,7 @@ namespace TimeBank.API.Dtos
 {
     public class UserRatingsResponseDto
     {
+        public int UserRatingId { get; set; }
         public double Rating { get; set; }
         public string Comments { get; set; }
         public DateTime CreatedOn { get; set; }
