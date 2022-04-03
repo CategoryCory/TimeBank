@@ -11,7 +11,7 @@ namespace TimeBank.API.Extensions
     {
         public static void ConfigureCors(this IServiceCollection services, IConfiguration config)
         {
-            var corsOrigins = config.GetSection("CorsOrigins").Get<string[]>();
+            var corsOrigins = config.GetSection("CorsOrigins").Get<string>();
 
             services.AddCors(options =>
             {
