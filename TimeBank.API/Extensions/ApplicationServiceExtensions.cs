@@ -2,20 +2,24 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.Collections.Generic;
 using TimeBank.Repository;
 
 namespace TimeBank.API.Extensions
 {
     public static class ApplicationServiceExtensions
     {
-        public static void ConfigureCors(this IServiceCollection services)
+        public static void ConfigureCors(this IServiceCollection services, IConfiguration config)
         {
+            var corsOrigins = config.GetSection("CorsConfig:Origins").Get<string[]>();
+
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy",
-                    builder => builder.AllowAnyOrigin()
-                    .AllowAnyMethod()
-                    .AllowAnyHeader());
+                    builder => builder
+                        .WithOrigins(corsOrigins)
+                        .AllowAnyMethod()
+                        .AllowAnyHeader());
             });
         }
 
