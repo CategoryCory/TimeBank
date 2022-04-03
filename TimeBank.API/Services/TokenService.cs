@@ -29,10 +29,10 @@ namespace TimeBank.API.Services
             var credentials = GetSigningCredentials();
 
             var tokenOptions = new JwtSecurityToken(
-                issuer: _config.GetValue<string>("JwtValidIssuer"),
-                audience: _config.GetValue<string>("JwtValidAudience"),
+                issuer: _config.GetSection("JwtValidIssuer").Get<string>(),
+                audience: _config.GetSection("JwtValidAudience").Get<string>(),
                 claims: claims,
-                expires: DateTime.Now.AddDays(_config.GetValue<int>("JwtExpiresInDays")),
+                expires: DateTime.Now.AddDays(_config.GetSection("JwtExpiresInDays").Get<int>()),
                 signingCredentials: credentials
             );
 
@@ -60,7 +60,7 @@ namespace TimeBank.API.Services
 
         private SigningCredentials GetSigningCredentials()
         {
-            var tokenKey = Encoding.UTF8.GetBytes(_config.GetValue<string>("JwtSecurityKey"));
+            var tokenKey = Encoding.UTF8.GetBytes(_config.GetSection("JwtSecurityKey").Get<string>());
             var securityKey = new SymmetricSecurityKey(tokenKey);
 
             return new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha512Signature);

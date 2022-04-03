@@ -23,7 +23,10 @@ namespace TimeBank.API.Extensions
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddSignInManager<SignInManager<ApplicationUser>>();
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.GetValue<string>("JwtSecurityKey")));
+            //var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.GetValue<string>("JwtSecurityKey")));
+
+            var jwtSecret = config.GetSection("JwtSecurityKey").Get<string>();
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret));
 
             services.AddAuthentication(authOptions =>
             {
@@ -38,8 +41,8 @@ namespace TimeBank.API.Extensions
                         ValidateAudience = true,
                         ValidateLifetime = true,
                         ValidateIssuerSigningKey = true,
-                        ValidIssuer = config.GetValue<string>("JwtValidIssuer"),
-                        ValidAudience = config.GetValue<string>("JwtValidAudience"),
+                        ValidIssuer = config.GetSection("JwtValidIssuer").Get<string>(),
+                        ValidAudience = config.GetSection("JwtValidAudience").Get<string>(),
                         IssuerSigningKey = key,
                         ClockSkew = TimeSpan.FromMinutes(5)
                     };
