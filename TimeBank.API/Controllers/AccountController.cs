@@ -126,6 +126,8 @@ namespace TimeBank.API.Controllers
         {
             var token = await _tokenService.CreateToken(user);
 
+            var roles = await _userManager.GetRolesAsync(user);
+
             return new UserLoginResponseDto
             {
                 IsAuthenticationSuccessful = true,
@@ -134,6 +136,7 @@ namespace TimeBank.API.Controllers
                 DisplayName = user.FirstName,
                 UserName = user.UserName,
                 Email = user.Email,
+                Roles = roles,
                 IsApproved = user.IsApproved,
                 Token = token
             };

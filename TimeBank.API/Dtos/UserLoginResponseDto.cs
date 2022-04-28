@@ -1,4 +1,6 @@
-﻿namespace TimeBank.API.Dtos
+﻿using System.Collections.Generic;
+
+namespace TimeBank.API.Dtos
 {
     public class UserLoginResponseDto
     {
@@ -8,6 +10,7 @@
         public string UserName { get; set; }
         public string DisplayName { get; set; }
         public string Email { get; set; }
+        public IList<string> Roles { get; set; }
         public bool IsApproved { get; set; }
         public string Token { get; set; }
     }
