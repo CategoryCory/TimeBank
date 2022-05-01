@@ -45,5 +45,17 @@ namespace TimeBank.Services
 
             return ApplicationResult.Success();
         }
+
+        public async Task<List<ApplicationUser>> GetUsersAsync(bool showOnlyUnapproved = false)
+        {
+            var users = _userManager.Users.AsNoTracking();
+
+            if (showOnlyUnapproved)
+            {
+                users = users.Where(u => u.IsApproved);
+            }
+
+            return await users.ToListAsync();
+        }
     }
 }

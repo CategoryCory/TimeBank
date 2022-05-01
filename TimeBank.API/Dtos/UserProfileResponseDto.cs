@@ -17,6 +17,7 @@ namespace TimeBank.API.Dtos
         public string ZipCode { get; set; }
         public DateTime Birthday { get; set; }
         public string Biography { get; set; }
+        public bool IsApproved { get; set; }
         public List<UserSkillsDto> Skills { get; set; }
     }
 }
