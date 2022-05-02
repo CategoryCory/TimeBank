@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TimeBank.Repository;
 
@@ -11,9 +12,10 @@ using TimeBank.Repository;
 namespace TimeBank.Repository.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220501202938_AddMsgThreadConfig")]
+    partial class AddMsgThreadConfig
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -463,18 +465,10 @@ namespace TimeBank.Repository.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MessageId"), 1L, 1);
 
-                    b.Property<string>("AuthorId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("Body")
                         .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("getdate()");
 
                     b.Property<bool>("IsFromSender")
                         .HasColumnType("bit");
@@ -485,12 +479,7 @@ namespace TimeBank.Repository.Migrations
                     b.Property<int>("MessageThreadId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("ReadOn")
-                        .HasColumnType("datetime2");
-
                     b.HasKey("MessageId");
-
-                    b.HasIndex("AuthorId");
 
                     b.HasIndex("MessageThreadId");
 
@@ -523,11 +512,9 @@ namespace TimeBank.Repository.Migrations
 
                     b.HasIndex("FromUserId");
 
-                    b.HasIndex("ToUserId");
+                    b.HasIndex("JobId");
 
-                    b.HasIndex("JobId", "ToUserId", "FromUserId")
-                        .IsUnique()
-                        .HasFilter("[ToUserId] IS NOT NULL AND [FromUserId] IS NOT NULL");
+                    b.HasIndex("ToUserId");
 
                     b.ToTable("MessageThreads");
                 });
@@ -772,17 +759,11 @@ namespace TimeBank.Repository.Migrations
 
             modelBuilder.Entity("TimeBank.Repository.Models.Message", b =>
                 {
-                    b.HasOne("TimeBank.Repository.IdentityModels.ApplicationUser", "Author")
-                        .WithMany()
-                        .HasForeignKey("AuthorId");
-
                     b.HasOne("TimeBank.Repository.Models.MessageThread", "MessageThread")
                         .WithMany("Messages")
                         .HasForeignKey("MessageThreadId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Author");
 
                     b.Navigation("MessageThread");
                 });

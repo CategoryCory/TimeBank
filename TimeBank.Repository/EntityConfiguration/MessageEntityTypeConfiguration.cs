@@ -8,7 +8,17 @@ namespace TimeBank.Repository.EntityConfiguration
     {
         public void Configure(EntityTypeBuilder<Message> builder)
         {
-            //throw new System.NotImplementedException();
+            builder.Property(m => m.Body)
+                .IsRequired()
+                .HasMaxLength(500);
+            builder.Property(m => m.CreatedOn)
+                .HasDefaultValueSql("getdate()");
+
+            builder.HasOne(m => m.MessageThread)
+                .WithMany(t => t.Messages);
+
+            builder.HasOne(m => m.Author)
+                .WithMany();
         }
     }
 }

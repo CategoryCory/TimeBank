@@ -8,7 +8,18 @@ namespace TimeBank.Repository.EntityConfiguration
     {
         public void Configure(EntityTypeBuilder<MessageThread> builder)
         {
-            //throw new System.NotImplementedException();
+            builder.Property(t => t.CreatedOn)
+                .HasColumnType("date")
+                .ValueGeneratedOnAdd()
+                .HasDefaultValueSql("getdate()");
+
+            builder.HasIndex(t => new
+            {
+                t.JobId,
+                t.ToUserId,
+                t.FromUserId
+            })
+                .IsUnique();
         }
     }
 }
