@@ -21,6 +21,8 @@ namespace TimeBank.API.Maps
                 .ForMember(dest => dest.JobCategory, opt => opt.MapFrom(src => src.Job.JobCategory.JobCategoryName));
                 //.ForMember(dest => dest.ApplicantName, opt => opt.MapFrom(src => src.Applicant.FullName));
             CreateMap<JobCategory, JobCategoryDto>().ReverseMap();
+            CreateMap<MessageThreadDto, MessageThread>();
+            CreateMap<Message, MessageResponseDto>();
             CreateMap<TokenTransaction, TokenTransactionDto>().ReverseMap();
             CreateMap<UserRegistrationDto, ApplicationUser>()
                 .ForMember(u => u.UserName, options => options.MapFrom(x => x.Email))

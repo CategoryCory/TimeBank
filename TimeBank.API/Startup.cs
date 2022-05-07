@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using TimeBank.API.Extensions;
+using TimeBank.API.Hubs;
 using TimeBank.API.Maps;
 using TimeBank.API.Services;
 using TimeBank.Services;
@@ -34,6 +35,9 @@ namespace TimeBank.API
             {
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
             });
+
+            services.AddSignalR();
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "TimeBank.API", Version = "v1" });
@@ -81,6 +85,7 @@ namespace TimeBank.API
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<MessagesHub>("/hubs/messagesHub");
             });
         }
     }

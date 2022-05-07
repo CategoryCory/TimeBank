@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using TimeBank.API.Dtos;
+using TimeBank.Repository.Models;
 using TimeBank.Services.Contracts;
 
 namespace TimeBank.API.Controllers
@@ -27,15 +27,16 @@ namespace TimeBank.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetMessagesByThread([FromQuery] int jobId = 0,
-                                                             [FromQuery] string toUserId = "",
-                                                             [FromQuery] string fromUserId = "")
+        public async Task<IActionResult> GetMessagesByThread([FromBody] MessageThreadDto messageThreadDto)
         {
             // Return error if any parameters are missing
-            if (jobId == 0 || toUserId == "" || fromUserId == "") return BadRequest();
+            if (!ModelState.IsValid) return BadRequest();
 
             // Get message thread
-            var messageThread = await _messageService.GetMessageThreadByJobAndParticipantsAsync(jobId, toUserId, fromUserId);
+            var messageThread = await _messageService.GetMessageThreadByJobAndParticipantsAsync(
+                messageThreadDto.JobId,
+                messageThreadDto.ToUserId,
+                messageThreadDto.FromUserId);
 
             // If message thread doesn't exist, return
             if (messageThread is null) return NotFound();
@@ -44,25 +45,28 @@ namespace TimeBank.API.Controllers
             var messages = await _messageService.GetAllMessagesByThreadAsync(messageThread.MessageThreadId);
 
             // Create list of dtos to return
-            var messagesDtos = new List<MessageResponseDto>();
-            foreach (var message in messages)
-            {
-                messagesDtos.Add(new MessageResponseDto
-                {
-                    MessageId = message.MessageId,
-                    IsFromSender = message.IsFromSender,
-                    CreatedOn = message.CreatedOn,
-                    IsRead = message.IsRead,
-                    ReadOn = message.ReadOn,
-                    Body = message.Body,
-                    AuthorId = message.AuthorId,
-                    RecipientId = message.IsFromSender ? messageThread.ToUserId : messageThread.FromUserId,
-                    MessageThreadId = message.MessageThreadId,
-                    JobId = messageThread.JobId
-                });
-            }
+            var messagesDtos = _mapper.Map<MessageResponseDto>(messages);
 
             return Ok(messagesDtos);
+        }
+
+        [HttpPost("thread")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> AddMessageThread([FromBody] MessageThreadDto messageThreadDto)
+        {
+            if (!ModelState.IsValid) return BadRequest();
+
+            var messageToAdd = _mapper.Map<MessageThread>(messageThreadDto);
+
+            var result = await _messageService.CreateMessageThreadAsync(messageToAdd);
+
+            if (!result.IsSuccess)
+            {
+                return BadRequest(result.Errors);
+            }
+
+            return NoContent();
         }
     }
 }
