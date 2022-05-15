@@ -54,6 +54,7 @@ namespace TimeBank.API
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserSkillService, UserSkillService>();
             services.AddScoped<IJobScheduleService, JobScheduleService>();
+            services.AddScoped<IMessageThreadService, MessageThreadService>();
             services.AddScoped<IMessageService, MessageService>();
         }
 

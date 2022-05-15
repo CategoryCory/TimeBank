@@ -12,30 +12,13 @@ namespace TimeBank.Services
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger<MessageService> _logger;
-        private readonly MessageThreadValidator _threadValidator;
         private readonly MessageValidator _messageValidator;
 
         public MessageService(ApplicationDbContext context, ILogger<MessageService> logger)
         {
             _context = context;
             _logger = logger;
-            _threadValidator = new MessageThreadValidator();
             _messageValidator = new MessageValidator();
-        }
-
-        public async Task<MessageThread> GetMessageThreadByIdAsync(int threadId)
-        {
-            var messageThread = await _context.MessageThreads.FindAsync(threadId);
-
-            return messageThread;
-        }
-
-        public async Task<MessageThread> GetMessageThreadByJobAndParticipantsAsync(int jobId, string toUserId, string fromUserId)
-        {
-            var messageThread = await _context.MessageThreads.Where(x => x.JobId == jobId && x.ToUserId == toUserId && x.FromUserId == fromUserId)
-                                                             .SingleOrDefaultAsync();
-
-            return messageThread;
         }
 
         public async Task<List<Message>> GetAllMessagesByThreadAsync(int threadId)
@@ -43,23 +26,6 @@ namespace TimeBank.Services
             var messages = await _context.Messages.AsNoTracking().Where(m => m.MessageThreadId == threadId).ToListAsync();
 
             return messages;
-        }
-
-        public async Task<ApplicationResult> CreateMessageThreadAsync(MessageThread messageThread)
-        {
-            ValidationResult result = _threadValidator.Validate(messageThread);
-
-            if (!result.IsValid)
-            {
-                _logger.LogError("There was an error creating a message thread for job {jobId}", messageThread.JobId);
-
-                return ApplicationResult.Failure(result.Errors.Select(m => m.ErrorMessage).ToList());
-            }
-
-            _context.MessageThreads.Add(messageThread);
-            await _context.SaveChangesAsync();
-
-            return ApplicationResult.Success();
         }
 
         public async Task<ApplicationResult> AddNewMessageToThreadAsync(Message message, int threadId)
