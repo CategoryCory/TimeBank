@@ -12,6 +12,7 @@ namespace TimeBank.Repository.EntityConfiguration
                 .IsRequired()
                 .HasMaxLength(500);
             builder.Property(m => m.CreatedOn)
+                .ValueGeneratedOnAdd()
                 .HasDefaultValueSql("getdate()");
 
             builder.HasOne(m => m.MessageThread)

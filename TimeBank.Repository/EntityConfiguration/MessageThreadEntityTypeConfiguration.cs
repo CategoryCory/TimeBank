@@ -9,7 +9,6 @@ namespace TimeBank.Repository.EntityConfiguration
         public void Configure(EntityTypeBuilder<MessageThread> builder)
         {
             builder.Property(t => t.CreatedOn)
-                .HasColumnType("date")
                 .ValueGeneratedOnAdd()
                 .HasDefaultValueSql("getdate()");
 
