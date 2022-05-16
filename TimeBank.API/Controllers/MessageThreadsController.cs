@@ -26,11 +26,9 @@ namespace TimeBank.API.Controllers
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetMessageThread([FromQuery] int jobId,
-                                                          [FromQuery] string jobCreatorId,
-                                                          [FromQuery] string jobApplicantId)
+        public async Task<IActionResult> GetMessageThread([FromQuery] int jobId, [FromQuery] string jobApplicantId)
         {
-            var messageThread = await _messageThreadService.GetMessageThreadByJobAndParticipantsAsync(jobId, jobCreatorId, jobApplicantId);
+            var messageThread = await _messageThreadService.GetMessageThreadByJobAndParticipantsAsync(jobId, jobApplicantId);
 
             if (messageThread is null) return NotFound();
 
