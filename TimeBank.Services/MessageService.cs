@@ -23,7 +23,10 @@ namespace TimeBank.Services
 
         public async Task<List<Message>> GetAllMessagesByThreadAsync(int threadId)
         {
-            var messages = await _context.Messages.AsNoTracking().Where(m => m.MessageThreadId == threadId).ToListAsync();
+            var messages = await _context.Messages.AsNoTracking()
+                                                  .Where(m => m.MessageThreadId == threadId)
+                                                  .OrderBy(m => m.CreatedOn)
+                                                  .ToListAsync();
 
             return messages;
         }
