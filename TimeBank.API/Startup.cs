@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -8,6 +9,7 @@ using Microsoft.OpenApi.Models;
 using TimeBank.API.Extensions;
 using TimeBank.API.Hubs;
 using TimeBank.API.Maps;
+using TimeBank.API.Providers;
 using TimeBank.API.Services;
 using TimeBank.Services;
 using TimeBank.Services.Contracts;
@@ -36,7 +38,7 @@ namespace TimeBank.API
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
             });
 
-            services.AddSignalR();
+            //services.AddSignalR();
 
             services.AddSwaggerGen(c =>
             {
@@ -44,6 +46,7 @@ namespace TimeBank.API
             });
 
             services.AddAutoMapper(typeof(MappingProfiles).Assembly);
+            //services.AddSingleton<IUserIdProvider, EmailBasedUserIdProvider>();
             services.AddScoped<IJobService, JobService>();
             services.AddScoped<IJobCategoryService, JobCategoryService>();
             services.AddScoped<IJobApplicationService, JobApplicationService>();
@@ -86,7 +89,7 @@ namespace TimeBank.API
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapHub<MessagesHub>("/hubs/messagesHub");
+                //endpoints.MapHub<MessagesHub>("/hubs/messagesHub");
             });
         }
     }
