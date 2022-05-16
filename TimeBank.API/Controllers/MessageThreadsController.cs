@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -9,6 +10,7 @@ using TimeBank.Services.Contracts;
 namespace TimeBank.API.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize]
     [ApiController]
     public class MessageThreadsController : ControllerBase
     {
@@ -25,10 +27,10 @@ namespace TimeBank.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetMessageThread([FromQuery] int jobId,
-                                                          [FromQuery] string toUserId,
-                                                          [FromQuery] string fromUserId)
+                                                          [FromQuery] string jobCreatorId,
+                                                          [FromQuery] string jobApplicantId)
         {
-            var messageThread = await _messageThreadService.GetMessageThreadByJobAndParticipantsAsync(jobId, toUserId, fromUserId);
+            var messageThread = await _messageThreadService.GetMessageThreadByJobAndParticipantsAsync(jobId, jobCreatorId, jobApplicantId);
 
             if (messageThread is null) return NotFound();
 

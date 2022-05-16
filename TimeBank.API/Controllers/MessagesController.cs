@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using TimeBank.API.Dtos;
+using TimeBank.Repository.Models;
 using TimeBank.Services.Contracts;
 
 namespace TimeBank.API.Controllers
@@ -39,6 +40,36 @@ namespace TimeBank.API.Controllers
             var messagesDtos = _mapper.Map<List<MessageResponseDto>>(messages);
 
             return Ok(messagesDtos);
+        }
+
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> AddMessageToThread([FromBody] MessageDto messageDto)
+        {
+            if (!ModelState.IsValid) return BadRequest();
+
+            var messageToAdd = _mapper.Map<Message>(messageDto);
+
+            var response = await _messageService.AddNewMessageToThreadAsync(messageToAdd, messageToAdd.MessageThreadId);
+
+            if (!response.IsSuccess) return BadRequest(response.Errors);
+
+            return NoContent();
+        }
+
+        [HttpPut("read/{messageId}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> SetMessageRead(int messageId)
+        {
+            if (!ModelState.IsValid) return BadRequest();
+
+            var response = await _messageService.SetMessageToReadAsync(messageId);
+
+            if (!response.IsSuccess) return BadRequest(response.Errors);
+
+            return NoContent();
         }
     }
 }

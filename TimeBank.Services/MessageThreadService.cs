@@ -28,9 +28,11 @@ namespace TimeBank.Services
             return messageThread;
         }
 
-        public async Task<MessageThread> GetMessageThreadByJobAndParticipantsAsync(int jobId, string toUserId, string fromUserId)
+        public async Task<MessageThread> GetMessageThreadByJobAndParticipantsAsync(int jobId, string jobCreatorId, string jobApplicantId)
         {
-            var messageThread = await _context.MessageThreads.Where(x => x.JobId == jobId && x.ToUserId == toUserId && x.FromUserId == fromUserId)
+            var messageThread = await _context.MessageThreads.Where(x => x.JobId == jobId
+                                                                         && (x.ToUserId == jobCreatorId || x.FromUserId == jobCreatorId)
+                                                                         && (x.ToUserId == jobApplicantId || x.FromUserId == jobApplicantId))
                                                              .SingleOrDefaultAsync();
 
             return messageThread;

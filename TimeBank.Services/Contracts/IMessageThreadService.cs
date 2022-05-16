@@ -6,6 +6,6 @@ namespace TimeBank.Services.Contracts
     {
         Task<ApplicationResult> CreateMessageThreadAsync(MessageThread messageThread);
         Task<MessageThread> GetMessageThreadByIdAsync(int threadId);
-        Task<MessageThread> GetMessageThreadByJobAndParticipantsAsync(int jobId, string toUserId, string fromUserId);
+        Task<MessageThread> GetMessageThreadByJobAndParticipantsAsync(int jobId, string jobCreatorId, string jobApplicantId);
     }
 }
