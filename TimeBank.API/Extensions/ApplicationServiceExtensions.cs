@@ -19,7 +19,8 @@ namespace TimeBank.API.Extensions
                     builder => builder
                         .WithOrigins(corsOrigins)
                         .AllowAnyMethod()
-                        .AllowAnyHeader());
+                        .AllowAnyHeader()
+                        .AllowCredentials());
             });
         }
 
