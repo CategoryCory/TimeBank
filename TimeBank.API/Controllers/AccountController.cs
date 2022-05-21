@@ -40,7 +40,7 @@ namespace TimeBank.API.Controllers
         }
 
         [HttpPost("login")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserLoginResponseDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> Login([FromBody] UserLoginDto userLoginDto)
@@ -60,7 +60,7 @@ namespace TimeBank.API.Controllers
         }
 
         [HttpPost("register")]
-        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(UserProfileResponseDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> RegisterUser([FromBody] UserRegistrationDto userRegistrationDto)
         {
@@ -83,10 +83,15 @@ namespace TimeBank.API.Controllers
             }
 
             await _userManager.AddToRoleAsync(user, "Pending");
+            await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.NameIdentifier, user.Id));
 
             await _tokenBalanceService.CreateNewBalance(user.Id);
 
-            return StatusCode(StatusCodes.Status201Created);
+            var actionName = nameof(GetUserProfile);
+            var routeValues = new { userId = user.Id };
+            var createdUser = _mapper.Map<UserProfileResponseDto>(user);
+
+            return CreatedAtAction(actionName, routeValues, createdUser);
         }
 
         [HttpPut("approve/{userId}")]
@@ -108,9 +113,10 @@ namespace TimeBank.API.Controllers
             return NoContent();
         }
 
+        // TODO: change this route to GET /api/account/current
         [HttpGet]
         [Authorize]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserLoginResponseDto))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetCurrentUser()
         {
@@ -120,6 +126,24 @@ namespace TimeBank.API.Controllers
 
             var userDto = await CreateUserLoginResponseDto(user);
             return Ok(userDto);
+        }
+
+        [HttpGet("{userId}")]
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserProfileResponseDto))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetUserProfile(string userId)
+        {
+            if (userId is null) return BadRequest();
+
+            var user = await _userManager.FindByIdAsync(userId);
+
+            if (user is null) return NotFound();
+
+            var userProfileDto = _mapper.Map<UserProfileResponseDto>(user);
+
+            return Ok(userProfileDto);
         }
 
         private async Task<UserLoginResponseDto> CreateUserLoginResponseDto(ApplicationUser user)
