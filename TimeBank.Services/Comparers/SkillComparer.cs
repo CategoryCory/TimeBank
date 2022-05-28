@@ -11,9 +11,7 @@ namespace TimeBank.Services.Comparers
 
             if (x is null || y is null) return false;
 
-            return x.UserSkillId == y.UserSkillId
-                && x.SkillName == y.SkillName
-                && x.SkillNameSlug == y.SkillNameSlug;
+            return x.UserSkillId == y.UserSkillId;
         }
 
         public int GetHashCode([DisallowNull] UserSkill obj)
