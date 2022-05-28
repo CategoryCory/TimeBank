@@ -1,9 +1,11 @@
-﻿namespace TimeBank.API.Dtos
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace TimeBank.API.Dtos
 {
     public class JobCategoryDto
     {
-        public int JobCategoryId { get; set; }
+        [Required]
+        [MaxLength(150)]
         public string JobCategoryName { get; set; }
-        public string JobCategorySlug { get; set; }
     }
 }

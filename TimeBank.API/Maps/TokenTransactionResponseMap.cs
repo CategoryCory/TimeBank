@@ -21,7 +21,6 @@ namespace TimeBank.API.Maps
                     RecipientName = $"{transaction.Recipient.FirstName} {transaction.Recipient.LastName}",
                     Amount = transaction.Amount,
                     ProcessedOn = transaction.ProcessedOn,
-                    //ActionDescription = ""
                 });
             }
 

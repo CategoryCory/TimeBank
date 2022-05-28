@@ -37,46 +37,46 @@ namespace TimeBank.API.Controllers
         }
 
         // GET api/<UserProfileController>/<guid>
-        [HttpGet("{userId}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetProfileById(string userId)
-        {
-            var user = await _userManager.Users.Include(u => u.Skills).SingleOrDefaultAsync(u => u.Id == userId);
+        //[HttpGet("{userId}")]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //[ProducesResponseType(StatusCodes.Status404NotFound)]
+        //public async Task<IActionResult> GetProfileById(string userId)
+        //{
+        //    var user = await _userManager.Users.Include(u => u.Skills).SingleOrDefaultAsync(u => u.Id == userId);
 
-            if (user is null) return NotFound();
+        //    if (user is null) return NotFound();
 
-            var userProfileDto = _mapper.Map<UserProfileResponseDto>(user);
-            return Ok(userProfileDto);
-        }
+        //    var userProfileDto = _mapper.Map<UserProfileResponseDto>(user);
+        //    return Ok(userProfileDto);
+        //}
 
         // PUT api/<UserProfileController>/<guid>
-        [HttpPut("{userId}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> UpdateProfileById(string userId, [FromBody] UserProfileUpdateDto userProfileDto)
-        {
-            // Check if valid userId
-            if (string.IsNullOrWhiteSpace(userId)) return BadRequest();
+        //[HttpPut("{userId}")]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //[ProducesResponseType(StatusCodes.Status404NotFound)]
+        //public async Task<IActionResult> UpdateProfileById(string userId, [FromBody] UserProfileUpdateDto userProfileDto)
+        //{
+        //    // Check if valid userId
+        //    if (string.IsNullOrWhiteSpace(userId)) return BadRequest();
 
-            // Get user
-            var user = await _userManager.Users.Include(u => u.Skills).SingleOrDefaultAsync(u => u.Id == userId);
+        //    // Get user
+        //    var user = await _userManager.Users.Include(u => u.Skills).SingleOrDefaultAsync(u => u.Id == userId);
 
-            // If user isn't found, bail
-            if (user is null) return NotFound();
+        //    // If user isn't found, bail
+        //    if (user is null) return NotFound();
 
-            // Update user's skills
-            var skills = _mapper.Map<List<UserSkill>>(userProfileDto.Skills);
-            ApplicationResult resultSkillSet = await _userService.SetUserSkillsAsync(user, skills);
+        //    // Update user's skills
+        //    var skills = _mapper.Map<List<UserSkill>>(userProfileDto.Skills);
+        //    ApplicationResult resultSkillSet = await _userService.SetUserSkillsAsync(user, skills);
 
-            if (!resultSkillSet.IsSuccess) return BadRequest(resultSkillSet.Errors);
+        //    if (!resultSkillSet.IsSuccess) return BadRequest(resultSkillSet.Errors);
 
-            // Update user info
-            _mapper.Map(userProfileDto, user);
+        //    // Update user info
+        //    _mapper.Map(userProfileDto, user);
 
-            await _userManager.UpdateAsync(user);
-            return Ok(userProfileDto);
-        }
+        //    await _userManager.UpdateAsync(user);
+        //    return Ok(userProfileDto);
+        //}
     }
 }

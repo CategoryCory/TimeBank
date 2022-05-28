@@ -11,6 +11,5 @@ namespace TimeBank.API.Dtos
         public string RecipientName { get; set; }
         public double Amount { get; set; }
         public DateTime ProcessedOn { get; set; }
-        //public string ActionDescription { get; set; }
     }
 }

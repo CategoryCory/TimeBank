@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using TimeBank.API.Dtos;
 using TimeBank.Repository.Models;
@@ -24,7 +25,7 @@ namespace TimeBank.API.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<JobCategoryResponseDto>))]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> GetAllJobCategoriesAsync()
         {
@@ -32,11 +33,13 @@ namespace TimeBank.API.Controllers
 
             if (jobCategories.Count == 0) return NoContent();
 
-            return Ok(jobCategories);
+            var jobCategoryDtos = _mapper.Map<List<JobCategoryResponseDto>>(jobCategories);
+
+            return Ok(jobCategoryDtos);
         }
 
         [HttpGet("{categoryId}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(JobCategoryResponseDto))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetJobCategoryByIdAsync(int categoryId)
         {
@@ -44,7 +47,9 @@ namespace TimeBank.API.Controllers
 
             if (jobCategory is null) return NotFound();
 
-            return Ok(jobCategory);
+            var jobCategoryDto = _mapper.Map<JobCategoryResponseDto>(jobCategory);
+
+            return Ok(jobCategoryDto);
         }
 
         [HttpPost]
