@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using TimeBank.Repository;
 using TimeBank.Repository.IdentityModels;
-using TimeBank.Repository.Models;
 using TimeBank.Services.Comparers;
 using TimeBank.Services.Contracts;
 
@@ -12,16 +10,12 @@ namespace TimeBank.Services
     public class UserService : IUserService
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly ApplicationDbContext _context;
         private readonly ILogger<UserService> _logger;
         private readonly SkillComparer _skillComparer;
 
-        public UserService(UserManager<ApplicationUser> userManager,
-                           ApplicationDbContext context,
-                           ILogger<UserService> logger)
+        public UserService(UserManager<ApplicationUser> userManager, ILogger<UserService> logger)
         {
             _userManager = userManager;
-            _context = context;
             _logger = logger;
             _skillComparer = new SkillComparer();
         }
@@ -68,6 +62,10 @@ namespace TimeBank.Services
                 userFromDb.ZipCode = userToUpdate.ZipCode;
                 userFromDb.Birthday = userToUpdate.Birthday;
                 userFromDb.Biography = userToUpdate.Biography;
+                userFromDb.Facebook = userToUpdate.Facebook;
+                userFromDb.Twitter = userToUpdate.Twitter;
+                userFromDb.Instagram = userToUpdate.Instagram;
+                userFromDb.LinkedIn = userToUpdate.LinkedIn;
 
                 // Adjust skill list
                 var skillsToAdd = userToUpdate.Skills.Except(userFromDb.Skills, _skillComparer).ToList();

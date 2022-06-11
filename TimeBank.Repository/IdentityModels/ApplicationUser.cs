@@ -31,5 +31,6 @@ namespace TimeBank.Repository.IdentityModels
         public ICollection<UserRating> AuthoredRatings { get; set; }
         public ICollection<UserRating> ReceivedRatings { get; set; }
         public ICollection<UserSkill> Skills { get; set; }
+        public ICollection<Photo> Photos { get; set; }
     }
 }

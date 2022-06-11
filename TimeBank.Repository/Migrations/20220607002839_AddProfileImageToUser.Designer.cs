@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TimeBank.Repository;
 
@@ -11,9 +12,10 @@ using TimeBank.Repository;
 namespace TimeBank.Repository.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220607002839_AddProfileImageToUser")]
+    partial class AddProfileImageToUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -255,6 +257,10 @@ namespace TimeBank.Repository.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
+
+                    b.Property<string>("ProfileImage")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
@@ -530,32 +536,6 @@ namespace TimeBank.Repository.Migrations
                         .HasFilter("[ToUserId] IS NOT NULL AND [FromUserId] IS NOT NULL");
 
                     b.ToTable("MessageThreads");
-                });
-
-            modelBuilder.Entity("TimeBank.Repository.Models.Photo", b =>
-                {
-                    b.Property<int>("PhotoId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PhotoId"), 1L, 1);
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<string>("URL")
-                        .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("PhotoId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Photos");
                 });
 
             modelBuilder.Entity("TimeBank.Repository.Models.TokenBalance", b =>
@@ -836,15 +816,6 @@ namespace TimeBank.Repository.Migrations
                     b.Navigation("ToUser");
                 });
 
-            modelBuilder.Entity("TimeBank.Repository.Models.Photo", b =>
-                {
-                    b.HasOne("TimeBank.Repository.IdentityModels.ApplicationUser", "User")
-                        .WithMany("Photos")
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("TimeBank.Repository.Models.TokenBalance", b =>
                 {
                     b.HasOne("TimeBank.Repository.IdentityModels.ApplicationUser", "User")
@@ -891,8 +862,6 @@ namespace TimeBank.Repository.Migrations
                     b.Navigation("JobApplications");
 
                     b.Navigation("Jobs");
-
-                    b.Navigation("Photos");
 
                     b.Navigation("ReceivedRatings");
 

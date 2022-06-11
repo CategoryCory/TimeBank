@@ -15,15 +15,12 @@ namespace TimeBank.API.Extensions
     {
         public static void ConfigureIdentity(this IServiceCollection services, IConfiguration config)
         {
-            services.AddIdentityCore<ApplicationUser>(options => 
-                {
-                    options.User.RequireUniqueEmail = true;
-                })
-                .AddRoles<IdentityRole>()
+            services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+            {
+                options.User.RequireUniqueEmail = true;
+            })
                 .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddSignInManager<SignInManager<ApplicationUser>>();
-
-            //var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.GetValue<string>("JwtSecurityKey")));
+                .AddDefaultTokenProviders();
 
             var jwtSecret = config.GetSection("JwtSecurityKey").Get<string>();
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret));
