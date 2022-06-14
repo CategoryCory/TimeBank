@@ -1,18 +1,12 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using TimeBank.API.Extensions;
-using TimeBank.API.Hubs;
 using TimeBank.API.Maps;
-using TimeBank.API.Providers;
-using TimeBank.API.Services;
-using TimeBank.Services;
-using TimeBank.Services.Contracts;
 
 namespace TimeBank.API
 {
@@ -46,19 +40,8 @@ namespace TimeBank.API
             });
 
             services.AddAutoMapper(typeof(MappingProfiles).Assembly);
-            //services.AddSingleton<IUserIdProvider, EmailBasedUserIdProvider>();
-            services.AddScoped<IJobService, JobService>();
-            services.AddScoped<IJobCategoryService, JobCategoryService>();
-            services.AddScoped<IJobApplicationService, JobApplicationService>();
-            services.AddScoped<ITokenService, TokenService>();
-            services.AddScoped<ITokenBalanceService, TokenBalanceService>();
-            services.AddScoped<ITokenTransactionService, TokenTransactionService>();
-            services.AddScoped<IUserRatingService, UserRatingService>();
-            services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IUserSkillService, UserSkillService>();
-            services.AddScoped<IJobScheduleService, JobScheduleService>();
-            services.AddScoped<IMessageThreadService, MessageThreadService>();
-            services.AddScoped<IMessageService, MessageService>();
+
+            services.ConfigureLocalServices(_config);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
