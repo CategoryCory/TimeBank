@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -47,7 +48,12 @@ namespace TimeBank.API.Controllers
         {
             if (userLoginDto is null || !ModelState.IsValid) return BadRequest();
 
-            var user = await _userManager.FindByEmailAsync(userLoginDto.Email);
+            //var user = await _userManager.FindByEmailAsync(userLoginDto.Email);
+
+            var user = await _userManager.Users.AsNoTracking()
+                                               .Where(u => u.Email == userLoginDto.Email)
+                                               .Include(u => u.Photos.Where(p => p.IsCurrent == true))
+                                               .SingleOrDefaultAsync();
 
             if (user is null) return Unauthorized();
 
@@ -120,7 +126,13 @@ namespace TimeBank.API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetCurrentUser()
         {
-            var user = await _userManager.FindByEmailAsync(User.FindFirstValue(ClaimTypes.Email));
+            //var user = await _userManager.FindByEmailAsync(User.FindFirstValue(ClaimTypes.Email));
+            var userEmail = User.FindFirstValue(ClaimTypes.Email);
+
+            var user = await _userManager.Users.AsNoTracking()
+                                               .Where(u => u.Email == userEmail)
+                                               .Include(u => u.Photos.Where(p => p.IsCurrent == true))
+                                               .SingleOrDefaultAsync();
 
             if (user is null) return NotFound();
 
@@ -152,6 +164,8 @@ namespace TimeBank.API.Controllers
 
             var roles = await _userManager.GetRolesAsync(user);
 
+            var profileImageUrl = user.Photos.Count > 0 ? user.Photos.First().URL : "";
+
             return new UserLoginResponseDto
             {
                 IsAuthenticationSuccessful = true,
@@ -160,6 +174,7 @@ namespace TimeBank.API.Controllers
                 DisplayName = user.FirstName,
                 UserName = user.UserName,
                 Email = user.Email,
+                ProfileImageUrl = profileImageUrl,
                 Roles = roles,
                 IsApproved = user.IsApproved,
                 Token = token

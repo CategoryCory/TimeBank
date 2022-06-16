@@ -19,5 +19,6 @@ namespace TimeBank.API.Dtos
         public string Biography { get; set; }
         public bool IsApproved { get; set; }
         public List<UserSkillsDto> Skills { get; set; }
+        public List<PhotoResponseDto> Photos { get; set; }
     }
 }

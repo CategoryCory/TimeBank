@@ -1,9 +1,8 @@
 ﻿using System;
-using TimeBank.Repository.IdentityModels;
 
-namespace TimeBank.Repository.Models;
+namespace TimeBank.API.Dtos;
 
-public class Photo
+public class PhotoResponseDto
 {
     public int PhotoId { get; set; }
     public string Name { get; set; }
@@ -11,7 +10,5 @@ public class Photo
     public string URL { get; set; }
     public bool IsCurrent { get; set; }
     public DateTime UploadedOn { get; set; }
-
     public string UserId { get; set; }
-    public ApplicationUser User { get; set; }
 }

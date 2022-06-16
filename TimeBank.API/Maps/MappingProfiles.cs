@@ -30,6 +30,7 @@ namespace TimeBank.API.Maps
                 .ForMember(u => u.UserName, options => options.MapFrom(x => x.Email));
             CreateMap<ApplicationUser, UserProfileResponseDto>();
             CreateMap<UserProfileUpdateDto, ApplicationUser>();
+            CreateMap<Photo, PhotoResponseDto>();
             CreateMap<UserRatingsDto, UserRating>();
             CreateMap<UserRating, UserRatingsResponseDto>()
                 .ForMember(dest => dest.AuthorName, opt => opt.MapFrom(src => src.Author.FullName))

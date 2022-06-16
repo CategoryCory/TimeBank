@@ -29,12 +29,16 @@ namespace TimeBank.Services
                 users = users.Where(u => u.IsApproved);
             }
 
-            return await users.Include(u => u.Skills).ToListAsync();
+            return await users.Include(u => u.Skills)
+                              .Include(u => u.Photos.Where(p => p.IsCurrent == true))
+                              .ToListAsync();
         }
 
         public async Task<ApplicationUser> GetUserByIdAsync(string userId)
         {
-            return await _userManager.Users.Include(u => u.Skills).SingleOrDefaultAsync(u => u.Id == userId);
+            return await _userManager.Users.Include(u => u.Skills)
+                                           .Include(u => u.Photos.Where(p => p.IsCurrent == true))
+                                           .SingleOrDefaultAsync(u => u.Id == userId);
         }
 
         public async Task<ApplicationResult> UpdateUserAsync(ApplicationUser userToUpdate)

@@ -1,4 +1,5 @@
 ﻿using FluentValidation.Results;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using TimeBank.Repository;
@@ -21,9 +22,9 @@ public class PhotoService : IPhotoService
         _validator = new PhotoValidator();
     }
 
-    public async Task<ApplicationResult> AddPhoto(Photo photo)
+    public async Task<ApplicationResult> AddPhotoAsync(Photo photoToAdd)
     {
-        ValidationResult result = _validator.Validate(photo);
+        ValidationResult result = _validator.Validate(photoToAdd);
 
         if (!result.IsValid)
         {
@@ -32,7 +33,17 @@ public class PhotoService : IPhotoService
             return ApplicationResult.Failure(result.Errors.Select(err => err.ErrorMessage).ToList());
         }
 
-        _context.Photos.Add(photo);
+        // Check to see if another photo is current; if so, make this one current
+        var currentPhotos = await _context.Photos.Where(p => p.UserId == photoToAdd.UserId && p.IsCurrent == true).ToListAsync();
+
+        foreach (var p in currentPhotos)
+        {
+            p.IsCurrent = false;
+        }
+
+        photoToAdd.IsCurrent = true;
+
+        _context.Photos.Add(photoToAdd);
         await _context.SaveChangesAsync();
 
         return ApplicationResult.Success();
