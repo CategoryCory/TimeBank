@@ -1,7 +1,6 @@
 ﻿using FluentValidation.Results;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using TimeBank.Repository;
 using TimeBank.Repository.Models;
 using TimeBank.Services.Contracts;
@@ -20,6 +19,13 @@ public class PhotoService : IPhotoService
         _context = context;
         _logger = logger;
         _validator = new PhotoValidator();
+    }
+
+    public async Task<Photo> GetCurrentPhotoByUserIdAsync(string userId)
+    {
+        return await _context.Photos.AsNoTracking()
+                                    .Where(p => p.UserId == userId && p.IsCurrent == true)
+                                    .FirstOrDefaultAsync();
     }
 
     public async Task<ApplicationResult> AddPhotoAsync(Photo photoToAdd)

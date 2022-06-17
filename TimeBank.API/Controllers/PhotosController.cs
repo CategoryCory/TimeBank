@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -20,19 +21,39 @@ namespace TimeBank.API.Controllers;
 public class PhotosController : ControllerBase
 {
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly IMapper _mapper;
     private readonly IPhotoService _photoService;
     private readonly IPhotoUploadService _photoUploadService;
     private readonly HtmlEncoder _htmlEncoder;
 
     public PhotosController(UserManager<ApplicationUser> userManager,
+                            IMapper mapper,
                             IPhotoService photoService,
                             IPhotoUploadService photoUploadService,
                             HtmlEncoder htmlEncoder)
     {
         _userManager = userManager;
+        _mapper = mapper;
         _photoService = photoService;
         _photoUploadService = photoUploadService;
         _htmlEncoder = htmlEncoder;
+    }
+
+    [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PhotoResponseDto))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetCurrentPhotoByUserId([FromQuery] string userId)
+    {
+        if (string.IsNullOrWhiteSpace(userId)) return BadRequest("A user ID must be provided.");
+
+        var photo = await _photoService.GetCurrentPhotoByUserIdAsync(userId);
+
+        if (photo is null) return NotFound();
+
+        var photoResponseDto = _mapper.Map<PhotoResponseDto>(photo);
+
+        return Ok(photoResponseDto);
     }
 
     [HttpPost]
