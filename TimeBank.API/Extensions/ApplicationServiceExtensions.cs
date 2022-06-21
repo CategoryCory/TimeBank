@@ -51,7 +51,7 @@ namespace TimeBank.API.Extensions
             services.AddScoped<ITokenTransactionService, TokenTransactionService>();
             services.AddScoped<IUserRatingService, UserRatingService>();
             services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IUserSkillService, UserSkillService>();
+            //services.AddScoped<IUserSkillService, UserSkillService>();
             services.AddScoped<IJobScheduleService, JobScheduleService>();
             services.AddScoped<IMessageThreadService, MessageThreadService>();
             services.AddScoped<IMessageService, MessageService>();

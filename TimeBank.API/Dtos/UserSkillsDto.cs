@@ -5,6 +5,7 @@ namespace TimeBank.API.Dtos
 {
     public class UserSkillsDto
     {
+        [Required(ErrorMessage = "Skill ID is required.")]
         public Guid UserSkillId { get; set; }
 
         [Required(ErrorMessage = "Skill name is required.")]
@@ -12,5 +13,8 @@ namespace TimeBank.API.Dtos
         public string SkillName { get; set; }
 
         public string SkillNameSlug { get; set; }
+        public bool IsCurrent { get; set; }
+        public DateTime CreatedOn { get; set; }
+        public string UserId { get; set; }
     }
 }

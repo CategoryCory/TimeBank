@@ -1,52 +1,53 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using TimeBank.Repository;
 using TimeBank.Repository.IdentityModels;
+using TimeBank.Repository.Models;
 using TimeBank.Services.Comparers;
 using TimeBank.Services.Contracts;
+using TimeBank.Services.Extensions;
 
 namespace TimeBank.Services
 {
     public class UserService : IUserService
     {
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ApplicationDbContext _context;
         private readonly ILogger<UserService> _logger;
         private readonly SkillComparer _skillComparer;
 
-        public UserService(UserManager<ApplicationUser> userManager, ILogger<UserService> logger)
+        public UserService(ApplicationDbContext context, ILogger<UserService> logger)
         {
-            _userManager = userManager;
+            _context = context;
             _logger = logger;
             _skillComparer = new SkillComparer();
         }
 
         public async Task<List<ApplicationUser>> GetUsersAsync(bool showOnlyUnapproved = false)
         {
-            var users = _userManager.Users.AsNoTracking();
+            var users = _context.Users.AsNoTracking();
 
             if (showOnlyUnapproved)
             {
                 users = users.Where(u => u.IsApproved);
             }
 
-            return await users.Include(u => u.Skills)
+            return await users.Include(u => u.Skills.Where(s => s.IsCurrent == true))
                               .Include(u => u.Photos.Where(p => p.IsCurrent == true))
                               .ToListAsync();
         }
 
         public async Task<ApplicationUser> GetUserByIdAsync(string userId)
         {
-            return await _userManager.Users.Include(u => u.Skills)
+            var user = await _context.Users.Include(u => u.Skills)
                                            .Include(u => u.Photos.Where(p => p.IsCurrent == true))
                                            .SingleOrDefaultAsync(u => u.Id == userId);
+
+            return user;
         }
 
         public async Task<ApplicationResult> UpdateUserAsync(ApplicationUser userToUpdate)
         {
-            // We need this to 1) check if user exists, and 2) compare skills
-            var userFromDb = await _userManager.Users.Where(u => u.Id == userToUpdate.Id)
-                                                     .Include(u => u.Skills)
-                                                     .SingleOrDefaultAsync();
+            var userFromDb = await _context.Users.Where(u => u.Id == userToUpdate.Id).SingleOrDefaultAsync();
 
             if (userFromDb is null)
             {
@@ -71,22 +72,27 @@ namespace TimeBank.Services
                 userFromDb.Instagram = userToUpdate.Instagram;
                 userFromDb.LinkedIn = userToUpdate.LinkedIn;
 
-                // Adjust skill list
-                var skillsToAdd = userToUpdate.Skills.Except(userFromDb.Skills, _skillComparer).ToList();
-                var skillsToRemove = userFromDb.Skills.Except(userToUpdate.Skills, _skillComparer).ToList();
+                // Adjust skills
+                // Get current skills for user
+                var currentSkills = await _context.UserSkills.Where(s => s.UserId == userToUpdate.Id).ToListAsync();
+
+                var skillsToAdd = userToUpdate.Skills.Except(currentSkills, _skillComparer).ToList();
+                var skillsToRemove = currentSkills.Except(userToUpdate.Skills, _skillComparer).ToList();
 
                 foreach (var skill in skillsToAdd)
                 {
-                    userFromDb.Skills.Add(skill);
+                    skill.IsCurrent = true;
+                    skill.UserId = userToUpdate.Id;
+
+                    _context.UserSkills.Add(skill);
                 }
 
                 foreach (var skill in skillsToRemove)
                 {
-                    userFromDb.Skills.Remove(skill);
+                    _context.UserSkills.Remove(skill);
                 }
 
-                // Save user changes
-                await _userManager.UpdateAsync(userFromDb);
+                await _context.SaveChangesAsync();
 
                 return ApplicationResult.Success();
             }

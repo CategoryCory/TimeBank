@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using TimeBank.API.Dtos;
 using TimeBank.Repository.IdentityModels;
@@ -70,25 +72,22 @@ namespace TimeBank.API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> UpdateUserById(string userId, [FromBody] UserProfileUpdateDto userUpdateDto)
         {
-            // Check if valid userId and userUpdateDto
             if (string.IsNullOrWhiteSpace(userId) || !ModelState.IsValid) return BadRequest();
 
             // TODO: Check if user to update is the same as the requesting user OR an admin
 
-            // Map userUpdateDto to ApplicationUser
             var userToUpdate = _mapper.Map<ApplicationUser>(userUpdateDto);
-
-            // Set additional fields for userToUpdate
             userToUpdate.Id = userId;
 
-            // We should be able to pass userToUpdate to UserService and have it handle the rest
             ApplicationResult result = await _userService.UpdateUserAsync(userToUpdate);
 
-            // Return error if failure
             if (!result.IsSuccess) return StatusCode(StatusCodes.Status500InternalServerError, result.Errors);
 
-            // If successful, we fetch the user from the db and return Ok
-            var updatedUser = await _userManager.FindByIdAsync(userId);
+            var updatedUser = await _userManager.Users.Where(u => u.Id == userId)
+                                                      .Include(u => u.Skills.Where(s => s.IsCurrent == true))
+                                                      //.Include(u => u.Photos.Where(p => p.IsCurrent == true))
+                                                      .SingleOrDefaultAsync();
+
             var responseDto = _mapper.Map<UserProfileResponseDto>(updatedUser);
 
             return Ok(responseDto);

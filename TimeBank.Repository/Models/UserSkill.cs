@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using TimeBank.Repository.IdentityModels;
 
 namespace TimeBank.Repository.Models
@@ -9,7 +8,10 @@ namespace TimeBank.Repository.Models
         public Guid UserSkillId { get; set; }
         public string SkillName { get; set; }
         public string SkillNameSlug { get; set; }
+        public bool IsCurrent { get; set; } = true;
+        public DateTime CreatedOn { get; set; }
 
-        public ICollection<ApplicationUser> Users { get; set; }
+        public string UserId { get; set; }
+        public ApplicationUser User { get; set; }
     }
 }

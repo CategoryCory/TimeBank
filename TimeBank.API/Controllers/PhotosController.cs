@@ -101,12 +101,15 @@ public class PhotosController : ControllerBase
 
             if (!result.IsSuccess) return BadRequest(result.Errors);
 
-            var photoResponseDto = new PhotoResponseDto
-            {
-                Name = photo.Name,
-                DisplayName = photo.DisplayName,
-                URL = photo.URL
-            };
+            //var photoResponseDto = new PhotoResponseDto
+            //{
+                
+            //    Name = photo.Name,
+            //    DisplayName = photo.DisplayName,
+            //    URL = photo.URL
+            //};
+
+            var photoResponseDto = _mapper.Map<PhotoResponseDto>(photo);
 
             return Ok(photoResponseDto);
         }

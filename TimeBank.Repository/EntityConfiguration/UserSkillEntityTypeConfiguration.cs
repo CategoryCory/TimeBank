@@ -14,10 +14,14 @@ namespace TimeBank.Repository.EntityConfiguration
             builder.Property(s => s.SkillNameSlug)
                 .IsRequired()
                 .HasMaxLength(50);
+            builder.Property(s => s.CreatedOn)
+                .ValueGeneratedOnAdd()
+                .HasDefaultValueSql("getdate()");
+
             builder.HasIndex(s => s.SkillNameSlug)
                 .IsUnique();
 
-            builder.HasMany(s => s.Users)
+            builder.HasOne(s => s.User)
                 .WithMany(u => u.Skills);
         }
     }

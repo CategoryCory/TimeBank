@@ -16,41 +16,41 @@ namespace TimeBank.API.Controllers
     [ApiController]
     public class UserSkillsController : ControllerBase
     {
-        private readonly IUserSkillService _userSkillService;
-        private readonly IMapper _mapper;
+        //private readonly IUserSkillService _userSkillService;
+        //private readonly IMapper _mapper;
 
-        public UserSkillsController(IUserSkillService userSkillService, IMapper mapper)
-        {
-            _userSkillService = userSkillService;
-            _mapper = mapper;
-        }
+        //public UserSkillsController(IUserSkillService userSkillService, IMapper mapper)
+        //{
+        //    _userSkillService = userSkillService;
+        //    _mapper = mapper;
+        //}
 
-        [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> GetAllSkills([FromQuery] string searchString)
-        {
-            var userSkills = await _userSkillService.GetSkillsAsync(searchString);
+        //[HttpGet]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //[ProducesResponseType(StatusCodes.Status204NoContent)]
+        //public async Task<IActionResult> GetAllSkills([FromQuery] string searchString)
+        //{
+        //    var userSkills = await _userSkillService.GetSkillsAsync(searchString);
 
-            if (userSkills.Count == 0) return NoContent();
+        //    if (userSkills.Count == 0) return NoContent();
 
-            var userSkillsDtos = _mapper.Map<List<UserSkillsDto>>(userSkills);
+        //    var userSkillsDtos = _mapper.Map<List<UserSkillsDto>>(userSkills);
 
-            return Ok(userSkillsDtos);
-        }
+        //    return Ok(userSkillsDtos);
+        //}
 
-        [HttpPost]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> AddNewSkillRange([FromBody] ICollection<UserSkillsDto> userSkillsDtos)
-        {
-            var skillsToAdd = _mapper.Map<List<UserSkill>>(userSkillsDtos);
+        //[HttpPost]
+        //[ProducesResponseType(StatusCodes.Status204NoContent)]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //public async Task<IActionResult> AddNewSkillRange([FromBody] ICollection<UserSkillsDto> userSkillsDtos)
+        //{
+        //    var skillsToAdd = _mapper.Map<List<UserSkill>>(userSkillsDtos);
 
-            ApplicationResult result = await _userSkillService.AddSkillRangeAsync(skillsToAdd);
+        //    ApplicationResult result = await _userSkillService.AddSkillRangeAsync(skillsToAdd);
 
-            if (!result.IsSuccess) return BadRequest(result.Errors);
+        //    if (!result.IsSuccess) return BadRequest(result.Errors);
 
-            return NoContent();
-        }
+        //    return NoContent();
+        //}
     }
 }
