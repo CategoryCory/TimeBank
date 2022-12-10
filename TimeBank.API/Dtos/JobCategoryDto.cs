@@ -2,10 +2,10 @@
 
 namespace TimeBank.API.Dtos
 {
-    public class JobCategoryDto
+    public record JobCategoryDto
     {
         [Required]
         [MaxLength(150)]
-        public string JobCategoryName { get; set; }
+        public string JobCategoryName { get; init; }
     }
 }

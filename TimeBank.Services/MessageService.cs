@@ -8,7 +8,7 @@ using TimeBank.Services.Validators;
 
 namespace TimeBank.Services
 {
-    public class MessageService : IMessageService
+    public sealed class MessageService : IMessageService
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger<MessageService> _logger;

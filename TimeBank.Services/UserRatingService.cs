@@ -8,7 +8,7 @@ using TimeBank.Services.Validators;
 
 namespace TimeBank.Services
 {
-    public class UserRatingService : IUserRatingService
+    public sealed class UserRatingService : IUserRatingService
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger<UserRatingService> _logger;

@@ -6,7 +6,7 @@ using TimeBank.Services.Contracts;
 
 namespace TimeBank.Services
 {
-    public class TokenBalanceService : ITokenBalanceService
+    public sealed class TokenBalanceService : ITokenBalanceService
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger<TokenBalanceService> _logger;

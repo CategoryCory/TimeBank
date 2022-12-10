@@ -2,21 +2,21 @@
 
 namespace TimeBank.API.Dtos
 {
-    public class JobScheduleDto
+    public record JobScheduleDto
     {
-        public int JobScheduleId { get; set; }
+        public int JobScheduleId { get; init; }
 
         [Required(ErrorMessage = "The day of week is required.")]
-        public int DayOfWeek { get; set; }
+        public int DayOfWeek { get; init; }
 
         [Required(ErrorMessage = "The beginning time is required.")]
-        public int TimeBegin { get; set; }
+        public int TimeBegin { get; init; }
 
         [Required(ErrorMessage = "The ending time is required.")]
-        public int TimeEnd { get; set; }
+        public int TimeEnd { get; init; }
 
-        public string JobScheduleStatus { get; set; }
+        public string JobScheduleStatus { get; init; }
 
-        public int JobId { get; set; }
+        public int JobId { get; init; }
     }
 }

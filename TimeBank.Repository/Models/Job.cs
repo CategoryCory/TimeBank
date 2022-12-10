@@ -21,7 +21,6 @@ namespace TimeBank.Repository.Models
     public class Job
     {
         public int JobId { get; set; }
-        public Guid DisplayId { get; set; }
         public string JobName { get; set; }
         public string Description { get; set; }
         public DateTime ExpiresOn { get; set; }

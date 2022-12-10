@@ -1,8 +1,8 @@
 ﻿namespace TimeBank.API.Dtos
 {
-    public class UserAverageRatingResponseDto
+    public record UserAverageRatingResponseDto
     {
-        public string UserId { get; set; }
-        public double AverageRating { get; set; }
+        public string UserId { get; init; }
+        public double AverageRating { get; init; }
     }
 }

@@ -9,7 +9,7 @@ using TimeBank.API.Options;
 
 namespace TimeBank.API.Services;
 
-public class PhotoUploadService : IPhotoUploadService
+public sealed class PhotoUploadService : IPhotoUploadService
 {
     private readonly IOptions<AzureStorageSettings> _options;
 

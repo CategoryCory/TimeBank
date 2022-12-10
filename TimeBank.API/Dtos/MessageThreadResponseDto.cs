@@ -2,12 +2,12 @@
 
 namespace TimeBank.API.Dtos
 {
-    public class MessageThreadResponseDto
+    public record MessageThreadResponseDto
     {
-        public int MessageThreadId { get; set; }
-        public DateTime CreatedOn { get; set; }
-        public int JobId { get; set; }
-        public string ToUserId { get; set; }
-        public string FromUserId { get; set; }
+        public int MessageThreadId { get; init; }
+        public DateTime CreatedOn { get; init; }
+        public int JobId { get; init; }
+        public string ToUserId { get; init; }
+        public string FromUserId { get; init; }
     }
 }

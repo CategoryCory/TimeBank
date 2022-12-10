@@ -3,7 +3,7 @@ using TimeBank.Repository.Models;
 
 namespace TimeBank.Services.Validators
 {
-    public class UserSkillValidator : AbstractValidator<UserSkill>
+    public sealed class UserSkillValidator : AbstractValidator<UserSkill>
     {
         public UserSkillValidator()
         {

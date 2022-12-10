@@ -7,7 +7,7 @@ using TimeBank.Services.Validators;
 
 namespace TimeBank.Services
 {
-    public class TokenTransactionService : ITokenTransactionService
+    public sealed class TokenTransactionService : ITokenTransactionService
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger<TokenTransactionService> _logger;

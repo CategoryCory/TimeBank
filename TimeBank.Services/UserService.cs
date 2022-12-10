@@ -1,15 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Security.Cryptography;
 using TimeBank.Repository;
 using TimeBank.Repository.IdentityModels;
-using TimeBank.Repository.Models;
 using TimeBank.Services.Comparers;
 using TimeBank.Services.Contracts;
-using TimeBank.Services.Extensions;
 
 namespace TimeBank.Services
 {
-    public class UserService : IUserService
+    public sealed class UserService : IUserService
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger<UserService> _logger;
@@ -107,5 +106,13 @@ namespace TimeBank.Services
                 throw new Exception(ex.Message);
             }
         }
+
+        public Task<ApplicationResult> SetRefreshToken(ApplicationUser user)
+        {
+            return null;
+        }
+
+        private string GenerateSecureString(int stringLength = 64) =>
+            Convert.ToBase64String(RandomNumberGenerator.GetBytes(stringLength));
     }
 }

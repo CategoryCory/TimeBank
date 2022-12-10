@@ -1,24 +1,18 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using TimeBank.Repository.IdentityModels;
 
 namespace TimeBank.API.Dtos
 {
-    public class JobApplicationResponseDto
+    public record JobApplicationResponseDto
     {
-        public int JobApplicationId { get; set; }
-        public string Status { get; set; }
-        public DateTime CreatedOn { get; set; }
-        public DateTime? ResolvedOn { get; set; }
-        public int JobId { get; set; }
-        public string JobName { get; set; }
-        public string JobCreatedByName { get; set; }
-        public string JobCategory { get; set; }
-        public UserProfileResponseDto Applicant { get; set; }
-        public JobScheduleDto JobApplicationSchedule { get; set; }
-        //public ICollection<JobScheduleDto> JobApplicationSchedules { get; set; } = new List<JobScheduleDto>();
-        //public string ApplicantId { get; set; }
-        //public string ApplicantName { get; set; }
+        public int JobApplicationId { get; init; }
+        public string Status { get; init; }
+        public DateTime CreatedOn { get; init; }
+        public DateTime? ResolvedOn { get; init; }
+        public int JobId { get; init; }
+        public string JobName { get; init; }
+        public string JobCreatedByName { get; init; }
+        public string JobCategory { get; init; }
+        public UserProfileResponseDto Applicant { get; init; }
+        public JobScheduleDto JobApplicationSchedule { get; init; }
     }
 }

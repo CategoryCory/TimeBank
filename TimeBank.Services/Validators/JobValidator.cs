@@ -3,13 +3,13 @@ using TimeBank.Repository.Models;
 
 namespace TimeBank.Services.Validators
 {
-    public class JobValidator : AbstractValidator<Job>
+    public sealed class JobValidator : AbstractValidator<Job>
     {
         public JobValidator()
         {
-            RuleFor(j => j.DisplayId)
-                .NotEmpty()
-                .WithMessage("A unique identifier must be provided for the display ID.");
+            //RuleFor(j => j.DisplayId)
+            //    .NotEmpty()
+            //    .WithMessage("A unique identifier must be provided for the display ID.");
             RuleFor(j => j.JobName)
                 .NotEmpty()
                 .WithMessage("You must enter a name for this job.")

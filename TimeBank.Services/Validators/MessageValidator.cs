@@ -3,7 +3,7 @@ using TimeBank.Repository.Models;
 
 namespace TimeBank.Services.Validators
 {
-    public class MessageValidator : AbstractValidator<Message>
+    public sealed class MessageValidator : AbstractValidator<Message>
     {
         public MessageValidator()
         {

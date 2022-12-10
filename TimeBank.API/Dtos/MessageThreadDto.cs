@@ -2,15 +2,15 @@
 
 namespace TimeBank.API.Dtos
 {
-    public class MessageThreadDto
+    public record MessageThreadDto
     {
         [Required(ErrorMessage = "The job id is required")]
-        public int JobId { get; set; }
+        public int JobId { get; init; }
 
         [Required(ErrorMessage = "The recipient user id is required")]
-        public string ToUserId { get; set; }
+        public string ToUserId { get; init; }
 
         [Required(ErrorMessage = "The sender user id is required")]
-        public string FromUserId { get; set; }
+        public string FromUserId { get; init; }
     }
 }

@@ -1,9 +1,9 @@
 ﻿namespace TimeBank.API.Dtos
 {
-    public class JobCategoryResponseDto
+    public record JobCategoryResponseDto
     {
-        public int JobCategoryId { get; set; }
-        public string JobCategoryName { get; set; }
-        public string JobCategorySlug { get; set; }
+        public int JobCategoryId { get; init; }
+        public string JobCategoryName { get; init; }
+        public string JobCategorySlug { get; init; }
     }
 }

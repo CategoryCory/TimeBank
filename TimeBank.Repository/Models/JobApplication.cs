@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using TimeBank.Repository.IdentityModels;
 
 namespace TimeBank.Repository.Models
@@ -27,7 +26,5 @@ namespace TimeBank.Repository.Models
 
         public int JobApplicationScheduleId { get; set; }
         public JobSchedule JobApplicationSchedule { get; set; }
-
-        //public ICollection<JobSchedule> JobApplicationSchedules { get; set; }
     }
 }

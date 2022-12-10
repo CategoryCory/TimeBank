@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using HashidsNet;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,7 +15,8 @@ namespace TimeBank.API.Extensions
     {
         public static void ConfigureCors(this IServiceCollection services, IConfiguration config)
         {
-            var corsOrigins = config.GetSection("CorsOrigins").Get<string>();
+            //var corsOrigins = config.GetSection("CorsOrigins").Get<string>();
+            var corsOrigins = config["CorsOrigins"];
 
             services.AddCors(options =>
             {
@@ -43,6 +45,8 @@ namespace TimeBank.API.Extensions
         public static void ConfigureLocalServices(this IServiceCollection services, IConfiguration config)
         {
             //services.AddSingleton<IUserIdProvider, EmailBasedUserIdProvider>();
+            services.AddSingleton<IHashids>(_ => new Hashids(config["HashIdSettings:Salt"],
+                                                             config.GetSection("HashIdSettings:MinLength").Get<int>()));
             services.AddScoped<IJobService, JobService>();
             services.AddScoped<IJobCategoryService, JobCategoryService>();
             services.AddScoped<IJobApplicationService, JobApplicationService>();

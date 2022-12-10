@@ -3,25 +3,25 @@ using System.ComponentModel.DataAnnotations;
 
 namespace TimeBank.API.Dtos
 {
-    public class MessageDto
+    public record MessageDto
     {
-        public int MessageId { get; set; }
+        public int MessageId { get; init; }
 
         [Required]
-        public bool IsFromSender { get; set; }
+        public bool IsFromSender { get; init; }
 
         [Required]
         [MaxLength(500)]
-        public string Body { get; set; }
+        public string Body { get; init; }
 
-        public DateTime CreatedOn { get; set; }
-        public bool IsRead { get; set; }
-        public DateTime? ReadOn { get; set; }
-
-        [Required]
-        public int MessageThreadId { get; set; }
+        public DateTime CreatedOn { get; init; }
+        public bool IsRead { get; init; }
+        public DateTime? ReadOn { get; init; }
 
         [Required]
-        public string AuthorId { get; set; }
+        public int MessageThreadId { get; init; }
+
+        [Required]
+        public string AuthorId { get; init; }
     }
 }

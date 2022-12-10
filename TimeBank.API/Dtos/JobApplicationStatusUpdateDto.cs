@@ -2,12 +2,12 @@
 
 namespace TimeBank.API.Dtos
 {
-    public class JobApplicationStatusUpdateDto
+    public record JobApplicationStatusUpdateDto
     {
         [Required(ErrorMessage = "The job application id is missing.")]
-        public int JobApplicationId { get; set; }
+        public int JobApplicationId { get; init; }
 
         [Required(ErrorMessage = "The job application status is missing.")]
-        public string Status { get; set; }
+        public string Status { get; init; }
     }
 }

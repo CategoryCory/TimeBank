@@ -2,7 +2,7 @@
 
 namespace TimeBank.API.Services;
 
-public class PhotoUploadResponse
+public sealed class PhotoUploadResponse
 {
     public bool IsSuccess { get; set; }
     public string Name { get; set; } = string.Empty;

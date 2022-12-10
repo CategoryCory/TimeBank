@@ -2,13 +2,13 @@
 
 namespace TimeBank.API.Dtos;
 
-public class PhotoResponseDto
+public record PhotoResponseDto
 {
-    public int PhotoId { get; set; }
-    public string Name { get; set; }
-    public string DisplayName { get; set; }
-    public string URL { get; set; }
-    public bool IsCurrent { get; set; }
-    public DateTime UploadedOn { get; set; }
-    public string UserId { get; set; }
+    public int PhotoId { get; init; }
+    public string Name { get; init; }
+    public string DisplayName { get; init; }
+    public string URL { get; init; }
+    public bool IsCurrent { get; init; }
+    public DateTime UploadedOn { get; init; }
+    public string UserId { get; init; }
 }

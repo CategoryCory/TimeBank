@@ -2,15 +2,15 @@
 
 namespace TimeBank.API.Dtos
 {
-    public class UserRatingsResponseDto
+    public record UserRatingsResponseDto
     {
-        public int UserRatingId { get; set; }
-        public double Rating { get; set; }
-        public string Comments { get; set; }
-        public DateTime CreatedOn { get; set; }
-        public string AuthorId { get; set; }
-        public string AuthorName { get; set; }
-        public string RevieweeId { get; set; }
-        public string RevieweeName { get; set; }
+        public int UserRatingId { get; init; }
+        public double Rating { get; init; }
+        public string Comments { get; init; }
+        public DateTime CreatedOn { get; init; }
+        public string AuthorId { get; init; }
+        public string AuthorName { get; init; }
+        public string RevieweeId { get; init; }
+        public string RevieweeName { get; init; }
     }
 }

@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace TimeBank.API.Dtos
 {
-    public class JobApplicationDto
+    public record JobApplicationDto
     {
         [Required(ErrorMessage = "The job id is missing.")]
-        public int JobId { get; set; }
+        public int JobId { get; init; }
 
-        public string ApplicantId { get; set; }
+        public string ApplicantId { get; init; }
 
-        public int JobApplicationScheduleId { get; set; }
+        public int JobApplicationScheduleId { get; init; }
     }
 }

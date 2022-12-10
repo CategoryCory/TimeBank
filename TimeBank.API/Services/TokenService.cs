@@ -11,7 +11,7 @@ using TimeBank.Repository.IdentityModels;
 
 namespace TimeBank.API.Services
 {
-    public class TokenService : ITokenService
+    public sealed class TokenService : ITokenService
     {
         private readonly IConfiguration _config;
         private readonly UserManager<ApplicationUser> _userManager;
@@ -28,13 +28,22 @@ namespace TimeBank.API.Services
 
             var credentials = GetSigningCredentials();
 
+            //var tokenOptions = new JwtSecurityToken(
+            //    issuer: _config.GetSection("JwtValidIssuer").Get<string>(),
+            //    audience: _config.GetSection("JwtValidAudience").Get<string>(),
+            //    claims: claims,
+            //    expires: DateTime.Now.AddDays(_config.GetSection("JwtExpiresInDays").Get<int>()),
+            //    signingCredentials: credentials
+            //);
+
             var tokenOptions = new JwtSecurityToken(
-                issuer: _config.GetSection("JwtValidIssuer").Get<string>(),
-                audience: _config.GetSection("JwtValidAudience").Get<string>(),
+                issuer: _config["JwtSettings:ValidIssuer"],
+                audience: _config["JwtSettings:ValidAudience"],
                 claims: claims,
-                expires: DateTime.Now.AddDays(_config.GetSection("JwtExpiresInDays").Get<int>()),
+                expires: DateTime.Now.AddDays(_config.GetSection("JwtSettings:ExpiresInMinutes").Get<int>()),
                 signingCredentials: credentials
             );
+
 
             var token = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
 
@@ -60,7 +69,8 @@ namespace TimeBank.API.Services
 
         private SigningCredentials GetSigningCredentials()
         {
-            var tokenKey = Encoding.UTF8.GetBytes(_config.GetSection("JwtSecurityKey").Get<string>());
+            //var tokenKey = Encoding.UTF8.GetBytes(_config.GetSection("JwtSecurityKey").Get<string>());
+            var tokenKey = Encoding.UTF8.GetBytes(_config["JwtSettings:SecurityKey"]);
             var securityKey = new SymmetricSecurityKey(tokenKey);
 
             return new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha512Signature);

@@ -3,7 +3,7 @@ using TimeBank.Repository.Models;
 
 namespace TimeBank.Services.Validators
 {
-    public class JobCategoryValidator : AbstractValidator<JobCategory>
+    public sealed class JobCategoryValidator : AbstractValidator<JobCategory>
     {
         public JobCategoryValidator()
         {

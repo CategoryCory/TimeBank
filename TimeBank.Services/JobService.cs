@@ -8,7 +8,7 @@ using TimeBank.Services.Validators;
 
 namespace TimeBank.Services
 {
-    public class JobService : IJobService
+    public sealed class JobService : IJobService
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger<JobService> _logger;
@@ -21,7 +21,11 @@ namespace TimeBank.Services
             _jobValidator = new JobValidator();
         }
 
-        public async Task<List<Job>> GetAllJobsAsync(string userId = null, bool includeUserData = false)
+        public async Task<List<Job>> GetAllJobsAsync(int page,
+                                                     int perPage,
+                                                     string userId = null,
+                                                     bool includeUserData = false,
+                                                     bool includeClosed = false)
         {
             var jobs = _context.Jobs.AsNoTracking();
 
@@ -31,13 +35,19 @@ namespace TimeBank.Services
             if (includeUserData)
                 jobs = jobs.Include(j => j.CreatedBy);
 
+            if (!includeClosed)
+                jobs = jobs.Where(j => j.JobStatus == JobStatus.Available);
+
             return await jobs.Include(j => j.JobCategory)
                              .Include(j => j.JobSchedules)
+                             .AsSplitQuery()
                              .OrderByDescending(j => j.CreatedOn)
+                             .Skip((page - 1) * perPage)
+                             .Take(perPage)
                              .ToListAsync();
         }
 
-        public async Task<Job> GetJobByDisplayIdAsync(Guid displayId, bool includeUserData = false)
+        public async Task<Job> GetJobByIdAsync(int id, bool includeUserData = false)
         {
             var jobs = _context.Jobs.AsNoTracking();
 
@@ -54,15 +64,15 @@ namespace TimeBank.Services
             return await jobs.Include(j => j.JobCategory)
                              .Include(j => j.JobSchedules)
                              .AsSplitQuery()
-                             .SingleOrDefaultAsync(j => j.DisplayId == displayId);
+                             .FirstOrDefaultAsync(j => j.JobId == id);
         }
 
         public async Task<ApplicationResult> AddJobAsync(Job job)
         {
-            if (job.DisplayId == Guid.Empty)
-            {
-                job.DisplayId = Guid.NewGuid();
-            }
+            //if (job.DisplayId == Guid.Empty)
+            //{
+            //    job.DisplayId = Guid.NewGuid();
+            //}
             job.JobStatus = JobStatus.Available;
 
             ValidationResult result = _jobValidator.Validate(job);
@@ -83,10 +93,14 @@ namespace TimeBank.Services
         public async Task<ApplicationResult> UpdateJobAsync(Job jobToUpdate)
         {
             // Load the current job from the database
+            //var jobFromDb = await _context.Jobs
+            //    .Where(j => j.DisplayId == jobToUpdate.DisplayId)
+            //    .Include(j => j.JobSchedules)
+            //    .SingleOrDefaultAsync();
+
             var jobFromDb = await _context.Jobs
-                .Where(j => j.DisplayId == jobToUpdate.DisplayId)
                 .Include(j => j.JobSchedules)
-                .SingleOrDefaultAsync();
+                .FirstOrDefaultAsync(j => j.JobId == jobToUpdate.JobId);
 
             // If not found, bail
             if (jobFromDb is null || jobFromDb.JobId == 0)
@@ -140,13 +154,14 @@ namespace TimeBank.Services
             return ApplicationResult.Success();
         }
 
-        public async Task<ApplicationResult> DeleteJobAsync(Guid displayId)
+        public async Task<ApplicationResult> DeleteJobAsync(int jobId)
         {
-            var jobToDelete = await _context.Jobs.FirstOrDefaultAsync(j => j.DisplayId == displayId);
+            //var jobToDelete = await _context.Jobs.FirstOrDefaultAsync(j => j.DisplayId == displayId);
+            var jobToDelete = await _context.Jobs.FindAsync(jobId);
 
             if (jobToDelete is null)
             {
-                return ApplicationResult.Failure(new List<string> { $"The job with display id {displayId} could not be found." });
+                return ApplicationResult.Failure(new List<string> { $"The job with id {jobId} could not be found." });
             }
 
             _context.Jobs.Remove(jobToDelete);

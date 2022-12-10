@@ -1,24 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using TimeBank.Repository.Models;
 
 namespace TimeBank.API.Dtos
 {
-    public class UserProfileResponseDto
+    public record UserProfileResponseDto
     {
-        public string Id { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string Email { get; set; }
-        public string PhoneNumber { get; set; }
-        public string StreetAddress { get; set; }
-        public string City { get; set; }
-        public string State { get; set; }
-        public string ZipCode { get; set; }
-        public DateTime Birthday { get; set; }
-        public string Biography { get; set; }
-        public bool IsApproved { get; set; }
-        public List<UserSkillsDto> Skills { get; set; }
-        public List<PhotoResponseDto> Photos { get; set; }
+        public string Id { get; init; }
+        public string FirstName { get; init; }
+        public string LastName { get; init; }
+        public string Email { get; init; }
+        public string PhoneNumber { get; init; }
+        public string StreetAddress { get; init; }
+        public string City { get; init; }
+        public string State { get; init; }
+        public string ZipCode { get; init; }
+        public DateTime Birthday { get; init; }
+        public string Biography { get; init; }
+        public bool IsApproved { get; init; }
+        public List<UserSkillsDto> Skills { get; init; }
+        public List<PhotoResponseDto> Photos { get; init; }
     }
 }

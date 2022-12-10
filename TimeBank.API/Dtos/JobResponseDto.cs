@@ -1,24 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using TimeBank.Repository.Models;
 
 namespace TimeBank.API.Dtos
 {
-    public class JobResponseDto
+    public record JobResponseDto
     {
-        public int JobId { get; set; }
-        public Guid DisplayId { get; set; }
-        public string JobName { get; set; }
-        public string Description { get; set; }
-        public DateTime ExpiresOn { get; set; }
-        public string JobStatus { get; set; }
-        public DateTime CreatedOn { get; set; }
-        public int JobCategoryId { get; set; }
-        public string JobCategory { get; set; }
-        public string CreatedById { get; set; }
-        public string CreatedBy { get; set; }
-        public string JobScheduleType { get; set; }
-        public ICollection<JobScheduleDto> JobSchedules { get; set; } = new List<JobScheduleDto>();
-        public ICollection<JobApplicationResponseDto> JobApplications { get; set; } = new List<JobApplicationResponseDto>();
+        public int JobId { get; init; }
+        public string DisplayId { get; set; }
+        public string JobName { get; init; }
+        public string Description { get; init; }
+        public DateTime ExpiresOn { get; init; }
+        public string JobStatus { get; init; }
+        public DateTime CreatedOn { get; init; }
+        public int JobCategoryId { get; init; }
+        public string JobCategory { get; init; }
+        public string CreatedById { get; init; }
+        public string CreatedBy { get; init; }
+        public string JobScheduleType { get; init; }
+        public ICollection<JobScheduleDto> JobSchedules { get; init; } = new List<JobScheduleDto>();
+        public ICollection<JobApplicationResponseDto> JobApplications { get; init; } = new List<JobApplicationResponseDto>();
     }
 }

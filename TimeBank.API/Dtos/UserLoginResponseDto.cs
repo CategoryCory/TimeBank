@@ -2,17 +2,17 @@
 
 namespace TimeBank.API.Dtos
 {
-    public class UserLoginResponseDto
+    public record UserLoginResponseDto
     {
-        public bool IsAuthenticationSuccessful { get; set; }
-        public string ErrorMessage { get; set; }
-        public string UserId { get; set; }
-        public string UserName { get; set; }
-        public string DisplayName { get; set; }
-        public string Email { get; set; }
-        public string ProfileImageUrl { get; set; }
-        public IList<string> Roles { get; set; }
-        public bool IsApproved { get; set; }
-        public string Token { get; set; }
+        public bool IsAuthenticationSuccessful { get; init; }
+        public string ErrorMessage { get; init; }
+        public string UserId { get; init; }
+        public string UserName { get; init; }
+        public string DisplayName { get; init; }
+        public string Email { get; init; }
+        public string ProfileImageUrl { get; init; }
+        public IList<string> Roles { get; init; }
+        public bool IsApproved { get; init; }
+        //public string Token { get; init; }
     }
 }

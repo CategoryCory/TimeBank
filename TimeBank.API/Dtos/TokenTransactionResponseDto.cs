@@ -2,14 +2,14 @@
 
 namespace TimeBank.API.Dtos
 {
-    public class TokenTransactionResponseDto
+    public record TokenTransactionResponseDto
     {
-        public int TokenTransactionId { get; set; }
-        public string SenderId { get; set; }
-        public string SenderName { get; set; }
-        public string RecipientId { get; set; }
-        public string RecipientName { get; set; }
-        public double Amount { get; set; }
-        public DateTime ProcessedOn { get; set; }
+        public int TokenTransactionId { get; init; }
+        public string SenderId { get; init; }
+        public string SenderName { get; init; }
+        public string RecipientId { get; init; }
+        public string RecipientName { get; init; }
+        public double Amount { get; init; }
+        public DateTime ProcessedOn { get; init; }
     }
 }

@@ -85,7 +85,7 @@ namespace TimeBank.API.Controllers
 
             var updatedUser = await _userManager.Users.Where(u => u.Id == userId)
                                                       .Include(u => u.Skills.Where(s => s.IsCurrent == true))
-                                                      //.Include(u => u.Photos.Where(p => p.IsCurrent == true))
+                                                      .Include(u => u.Photos.Where(p => p.IsCurrent == true))
                                                       .SingleOrDefaultAsync();
 
             var responseDto = _mapper.Map<UserProfileResponseDto>(updatedUser);

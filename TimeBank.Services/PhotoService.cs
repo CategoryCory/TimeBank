@@ -8,7 +8,7 @@ using TimeBank.Services.Validators;
 
 namespace TimeBank.Services;
 
-public class PhotoService : IPhotoService
+public sealed class PhotoService : IPhotoService
 {
     private readonly ApplicationDbContext _context;
     private readonly ILogger<PhotoService> _logger;

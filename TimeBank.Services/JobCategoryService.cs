@@ -9,7 +9,7 @@ using TimeBank.Services.Validators;
 
 namespace TimeBank.Services
 {
-    public class JobCategoryService : IJobCategoryService
+    public sealed class JobCategoryService : IJobCategoryService
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger<JobCategoryService> _logger;

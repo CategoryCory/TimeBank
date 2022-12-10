@@ -1,10 +1,13 @@
 ﻿using AutoMapper;
+using HashidsNet;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using TimeBank.API.Dtos;
@@ -21,12 +24,17 @@ namespace TimeBank.API.Controllers
     {
         private readonly IJobService _jobService;
         private readonly IMapper _mapper;
+        private readonly IHashids _hashids;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public JobsController(IJobService jobService, IMapper mapper, UserManager<ApplicationUser> userManager)
+        public JobsController(IJobService jobService,
+                              IMapper mapper,
+                              IHashids hashids,
+                              UserManager<ApplicationUser> userManager)
         {
             _jobService = jobService;
             _mapper = mapper;
+            _hashids = hashids;
             _userManager = userManager;
         }
 
@@ -34,17 +42,24 @@ namespace TimeBank.API.Controllers
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> GetAllJobs()
+        public async Task<IActionResult> GetAllJobs([FromQuery] int page = 1, [FromQuery] int perPage = 10)
         {
             string userRole = User.FindFirstValue(ClaimTypes.Role);
 
             bool isAuthenticatedAndApproved = !string.IsNullOrWhiteSpace(userRole) && userRole != "Pending";
 
-            var jobs = await _jobService.GetAllJobsAsync(includeUserData: isAuthenticatedAndApproved);
+            var jobs = await _jobService.GetAllJobsAsync(page,
+                                                         perPage,
+                                                         includeUserData: isAuthenticatedAndApproved);
 
             if (jobs.Count == 0) return NoContent();
 
             var jobResponseDtos = _mapper.Map<List<JobResponseDto>>(jobs);
+
+            foreach (var dto in jobResponseDtos)
+            {
+                dto.DisplayId = _hashids.Encode(dto.JobId);
+            }
 
             return Ok(jobResponseDtos);
         }
@@ -56,7 +71,9 @@ namespace TimeBank.API.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<IActionResult> GetCurrentUserJobs()
+        public async Task<IActionResult> GetCurrentUserJobs([FromQuery] int page = 1,
+                                                            [FromQuery] int perPage = 10,
+                                                            [FromQuery] bool includeClosed = false)
         {
             var currentUserEmail = User.FindFirstValue(ClaimTypes.Email);
 
@@ -69,30 +86,45 @@ namespace TimeBank.API.Controllers
 
             if (!isAuthenticatedAndApproved) return Unauthorized();
 
-            var jobs = await _jobService.GetAllJobsAsync(currentUser.Id, isAuthenticatedAndApproved);
+            var jobs = await _jobService.GetAllJobsAsync(page,
+                                                         perPage,
+                                                         userId: currentUser.Id,
+                                                         includeUserData: isAuthenticatedAndApproved,
+                                                         includeClosed);
 
             if (jobs.Count == 0) return NoContent();
 
             var jobResponseDtos = _mapper.Map<List<JobResponseDto>>(jobs);
 
+            foreach (var dto in jobResponseDtos)
+            {
+                dto.DisplayId = _hashids.Encode(dto.JobId);
+            }
+
             return Ok(jobResponseDtos);
         }
 
-        // GET api/<JobsController>/GUID
+        // GET api/<JobsController>/displayId
         [HttpGet("{displayId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetById(Guid displayId)
+        public async Task<IActionResult> GetById([FromRoute] string displayId)
         {
+            var rawId = _hashids.Decode(displayId);
+
+            if (rawId.Length == 0) return NotFound();
+
             string userRole = User.FindFirstValue(ClaimTypes.Role);
 
             bool isAuthenticatedAndApproved = !string.IsNullOrWhiteSpace(userRole) && userRole != "Pending";
 
-            var job = await _jobService.GetJobByDisplayIdAsync(displayId, isAuthenticatedAndApproved);
+            var job = await _jobService.GetJobByIdAsync(rawId[0], isAuthenticatedAndApproved);
 
             if (job is null) return NotFound();
 
             var jobResponseDto = _mapper.Map<JobResponseDto>(job);
+
+            jobResponseDto.DisplayId = _hashids.Encode(jobResponseDto.JobId);
 
             return Ok(jobResponseDto);
         }
@@ -152,9 +184,13 @@ namespace TimeBank.API.Controllers
         [Authorize(Roles = "Admin,User")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> DeleteJob(Guid displayId)
+        public async Task<IActionResult> DeleteJob([FromRoute] string displayId)
         {
-            ApplicationResult result = await _jobService.DeleteJobAsync(displayId);
+            var rawId = _hashids.Decode(displayId);
+
+            if (rawId.Length == 0) return NotFound();
+
+            ApplicationResult result = await _jobService.DeleteJobAsync(rawId[0]);
 
             if (!result.IsSuccess)
             {

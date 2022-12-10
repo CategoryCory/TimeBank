@@ -3,7 +3,7 @@ using TimeBank.Repository.Models;
 
 namespace TimeBank.Services.Validators;
 
-public class PhotoValidator : AbstractValidator<Photo>
+public sealed class PhotoValidator : AbstractValidator<Photo>
 {
     public PhotoValidator()
     {

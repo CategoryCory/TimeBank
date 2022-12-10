@@ -8,7 +8,7 @@ using TimeBank.Services.Validators;
 
 namespace TimeBank.Services
 {
-    public class JobScheduleService : IJobScheduleService
+    public sealed class JobScheduleService : IJobScheduleService
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger<JobScheduleService> _logger;

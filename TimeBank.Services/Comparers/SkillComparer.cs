@@ -3,7 +3,7 @@ using TimeBank.Repository.Models;
 
 namespace TimeBank.Services.Comparers
 {
-    public class SkillComparer : IEqualityComparer<UserSkill>
+    public sealed class SkillComparer : IEqualityComparer<UserSkill>
     {
         public bool Equals(UserSkill x, UserSkill y)
         {
